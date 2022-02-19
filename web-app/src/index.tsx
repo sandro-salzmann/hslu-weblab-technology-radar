@@ -1,12 +1,28 @@
+import { Auth0Provider } from "@auth0/auth0-react";
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
+const { REACT_APP_AUTH0_DOMAIN, REACT_APP_AUTH0_CLIENT_ID } = process.env;
+
+if (!REACT_APP_AUTH0_DOMAIN) {
+  throw new Error("REACT_APP_AUTH0_DOMAIN missing!");
+}
+if (!REACT_APP_AUTH0_CLIENT_ID) {
+  throw new Error("REACT_APP_AUTH0_CLIENT_ID missing!");
+}
+
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Auth0Provider
+    domain={REACT_APP_AUTH0_DOMAIN}
+    clientId={REACT_APP_AUTH0_CLIENT_ID}
+    redirectUri={window.location.origin}
+  >
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </Auth0Provider>,
   document.getElementById("root")
 );
 
