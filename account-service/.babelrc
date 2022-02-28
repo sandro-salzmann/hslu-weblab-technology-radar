@@ -1,0 +1,13 @@
+{
+  "presets": [
+    "@babel/preset-typescript", // transpiles ts to js
+    [
+      "@babel/preset-env", // transpiles es6 to common js modules
+      {
+        "targets": {
+          "node": true
+        }
+      }
+    ]
+  ]
+}
