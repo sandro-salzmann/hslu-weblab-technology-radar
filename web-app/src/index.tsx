@@ -4,7 +4,11 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-const { REACT_APP_AUTH0_DOMAIN, REACT_APP_AUTH0_CLIENT_ID } = process.env;
+const {
+  REACT_APP_AUTH0_DOMAIN,
+  REACT_APP_AUTH0_CLIENT_ID,
+  REACT_APP_AUTH0_AUDIENCE,
+} = process.env;
 
 if (!REACT_APP_AUTH0_DOMAIN) {
   throw new Error("REACT_APP_AUTH0_DOMAIN missing!");
@@ -18,6 +22,7 @@ ReactDOM.render(
     domain={REACT_APP_AUTH0_DOMAIN}
     clientId={REACT_APP_AUTH0_CLIENT_ID}
     redirectUri={window.location.origin}
+    audience={REACT_APP_AUTH0_AUDIENCE}
   >
     <React.StrictMode>
       <App />
