@@ -6,7 +6,7 @@ interface BuildListAccountFnProps {
   accountsDb: AccountsDb;
 }
 interface ListAccountFnProps {
-  accountId: string;
+  accountId?: string;
 }
 type BuildListAccountFn = (props: BuildListAccountFnProps) => ListAccountFn;
 export type ListAccountFn = (props: ListAccountFnProps) => Promise<AccountData>;

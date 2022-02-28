@@ -24,7 +24,7 @@ export const makeGetAccount: MakeGetAccountFn =
         body: account,
       };
     } catch (e: any) {
-      console.error(e); // TODO: better error handling
+      // TODO: error handling
       return {
         headers,
         statusCode: 400,
