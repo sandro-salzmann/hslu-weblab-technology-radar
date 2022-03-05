@@ -1,10 +1,13 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "semantic-ui-react";
+import { toCapitalize } from "../utils/toCapitalize";
 
 export const Header = () => {
-  const { loginWithRedirect, logout } = useAuth0();
-  const { isAuthenticated, isLoading } = useAuth0();
+  const { loginWithRedirect, logout, isAuthenticated, isLoading } = useAuth0();
+  const location = useLocation();
+  const pathname = location.pathname.slice(1);
 
   const onLoginClick = async () => {
     loginWithRedirect();
@@ -15,27 +18,36 @@ export const Header = () => {
   };
 
   return (
-    <div style={{ paddingTop: 16 }}>
-      <h1 style={{ display: "inline-block", paddingRight: 16 }}>
-        📡 Techradar
-      </h1>
-      {isLoading ? (
-        "Loading..."
-      ) : isAuthenticated ? (
+    <div
+      style={{
+        paddingTop: 16,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <h1 style={{ marginBottom: 0 }}>{`📡 Techradar${
+        pathname ? `: ${toCapitalize(pathname)}` : ""
+      }`}</h1>
+      {isAuthenticated ? (
         <Button
           onClick={onLogoutClick}
-          style={{ float: "right" }}
+          style={{ marginRight: 0 }}
           basic
           size="big"
           content="Logout"
+          disabled={isLoading}
+          loading={isLoading}
         />
       ) : (
         <Button
           onClick={onLoginClick}
-          style={{ float: "right" }}
-          primary
+          style={{ marginRight: 0 }}
+          primary={!isLoading}
           size="big"
-          content="Login"
+          content={isLoading ? "Logout" : "Login"}
+          disabled={isLoading}
+          loading={isLoading}
         />
       )}
     </div>
