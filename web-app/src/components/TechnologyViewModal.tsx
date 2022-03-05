@@ -9,10 +9,6 @@ import {
   PlaceholderThreeLines,
 } from "./Placeholders";
 
-interface TechnologyViewModalProps {
-  id: string;
-}
-
 export const TechnologyViewModal = () => {
   const clearActiveTechnologyId = useStore(
     (state) => state.clearActiveTechnologyId
