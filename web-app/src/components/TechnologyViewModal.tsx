@@ -31,7 +31,7 @@ export const TechnologyViewModal = () => {
   const close = () => clearActiveTechnologyId();
 
   return error ? (
-    `Failed to get technology (${error.message})`
+    <span>Failed to get technology ({error.message})</span>
   ) : (
     <Modal onClose={close} open={!!activeTechnologyId} size="small" closeIcon>
       <Modal.Header>

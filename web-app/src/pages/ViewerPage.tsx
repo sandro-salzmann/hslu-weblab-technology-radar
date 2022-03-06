@@ -35,7 +35,7 @@ export const ViewerPage = () => {
   ];
 
   return error ? (
-    `Failed to get technologies (${error.message})`
+    <span>Failed to get technologies ({error.message})</span>
   ) : (
     <Grid stackable columns={2}>
       {categoryCards.map((cardData) => (

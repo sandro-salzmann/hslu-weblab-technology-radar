@@ -7,7 +7,7 @@ export const TechnologiesTable = () => {
   const { data = [], error, isLoading } = useTechnologyPreviewsQuery();
 
   return error ? (
-    `Failed to get technologies (${error.message})`
+    <span>Failed to get technologies ({error.message})</span>
   ) : (
     <Table compact celled unstackable>
       <Table.Header>

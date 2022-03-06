@@ -1,7 +1,7 @@
 import {
   TechnologyCategory,
   TechnologyMaturity,
-  TechnologyPreviewData
+  TechnologyPreviewData,
 } from "common";
 import React, { Fragment } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -66,7 +66,7 @@ export const CategoryPage = ({ category }: CategoryPageProps) => {
   ];
 
   return error ? (
-    `Failed to get technologies (${error.message})`
+    <span>Failed to get technologies ({error.message})</span>
   ) : (
     <Fragment>
       <Button
