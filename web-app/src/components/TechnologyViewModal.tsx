@@ -25,7 +25,7 @@ export const TechnologyViewModal = () => {
     maturity = "",
     name,
     description,
-    descriptionClassification,
+    maturityDescription,
   } = technology || {};
 
   const close = () => clearActiveTechnologyId();
@@ -49,7 +49,7 @@ export const TechnologyViewModal = () => {
           ) : (
             <Fragment>
               <Header>{toCapitalize(maturity)}</Header>
-              <p>{descriptionClassification}</p>
+              <p>{maturityDescription}</p>
             </Fragment>
           )}
         </Modal.Description>
