@@ -20,6 +20,11 @@ export const useAuthFetch = () => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
+    if (!result.ok) {
+      throw new Error("Network response was not ok");
+    }
+
     return await result.json();
   };
 

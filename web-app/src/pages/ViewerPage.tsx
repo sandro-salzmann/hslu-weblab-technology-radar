@@ -1,11 +1,15 @@
 import { TechnologyCategory, TechnologyPreviewData } from "common";
 import React from "react";
 import { Grid } from "semantic-ui-react";
-import { useGetTechnologyPreviews } from "../api/useApi";
+import { useTechnologyPreviewsQuery } from "../api/useQueries";
 import { CategoryCard } from "../components/CategoryCard";
 
 export const ViewerPage = () => {
-  const { technologyPreviews, isLoading } = useGetTechnologyPreviews();
+  const {
+    data: technologyPreviews = [],
+    error,
+    isLoading,
+  } = useTechnologyPreviewsQuery();
 
   const techniqueTechnologyPreviews = technologyPreviews.filter(
     ({ category }) => category === "techniques"
@@ -30,7 +34,9 @@ export const ViewerPage = () => {
     { category: "languages", technologyPreviews: languageTechnologyPreviews },
   ];
 
-  return (
+  return error ? (
+    `Failed to get technologies (${error.message})`
+  ) : (
     <Grid stackable columns={2}>
       {categoryCards.map((cardData) => (
         <Grid.Column key={cardData.category}>
