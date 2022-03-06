@@ -23,12 +23,15 @@ export const useAddTechnology = ({
   const { authFetch } = useAuthFetch();
 
   return useMutation(
-    (technology: AddTechnologyBody) =>
-      authFetch(`/technology`, {
-        method: "POST",
-        body: JSON.stringify(technology),
-        headers: { "Content-Type": "application/json" },
-      }),
+      authFetch(
+        `/technology`,
+        {
+          method: "POST",
+          body: JSON.stringify(technology),
+          headers: { "Content-Type": "application/json" },
+        },
+        201
+      ),
     {
     }
   );

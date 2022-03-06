@@ -3,7 +3,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 export const useAuthFetch = () => {
   const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
-  const authFetch = async (input: RequestInfo, init: RequestInit = {}) => {
+  const authFetch = async (
+    input: RequestInfo,
+    init: RequestInit = {},
+    expectStatus?: number
+  ) => {
     if (!isAuthenticated) {
       throw new Error("User not authenticated.");
     }
@@ -21,12 +25,12 @@ export const useAuthFetch = () => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
-    if (!result.ok) {
-      throw new Error("Network response was not ok");
+    if (expectStatus && result.status != expectStatus) {
+      const { error } = await result.json();
+      throw new Error(error);
+    } else {
+      return await result.json();
     }
-
-    return await result.json();
   };
 
   return { authFetch };
