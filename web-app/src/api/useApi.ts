@@ -20,6 +20,7 @@ export const useGetTechnologyPreviews = (category?: TechnologyCategory) => {
       setHasError(false);
       setTechnologyPreviews(undefined);
       const results = (await authFetch(
+        `/technology/preview${category ? `?category=${category}` : ""}`
       )) as TechnologyPreviewData[];
       setTechnologyPreviews(results);
     } catch (error) {
