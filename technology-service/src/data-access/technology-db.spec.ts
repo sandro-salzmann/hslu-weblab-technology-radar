@@ -63,7 +63,7 @@ describe("technology db", () => {
           teamId,
           id: otherTeamIdTechnology.id,
         })
-    ).rejects.toThrow("Technology not found.");
+    ).rejects.toThrow("Failed to find technology.");
   });
 
   it("previews team technologies", async () => {
@@ -108,5 +108,21 @@ describe("technology db", () => {
       category: "languages",
     });
     expect(foundNone.length).toEqual(0);
+  });
+
+  it("doesnt throw internal errors (previewAll)", () => {
+    // @ts-ignore to test internal db errors
+    const technologyDb = makeTechnologyDb({ makeDb: () => null });
+    expect(() =>
+      technologyDb.previewAll({ teamId: Id.makeId() })
+    ).rejects.toThrow("Failed to find technologies.");
+  });
+
+  it("doesnt throw internal errors (findById)", () => {
+    // @ts-ignore to test internal db errors
+    const technologyDb = makeTechnologyDb({ makeDb: () => null });
+    expect(() =>
+      technologyDb.findById({ teamId: Id.makeId(), id: Id.makeId() })
+    ).rejects.toThrow("Failed to find technology.");
   });
 });

@@ -7,6 +7,7 @@ import { TechnologyPreview } from "../technology/technology-preview";
 interface MakeTechnologyDbFnProps {
   makeDb: MakeDbFn;
 }
+
 type MakeTechnologyDbFn = (props: MakeTechnologyDbFnProps) => TechnologyDb;
 export interface TechnologyDb {
   findById: (props: { teamId: string; id: string }) => Promise<Technology>;
@@ -18,65 +19,78 @@ export interface TechnologyDb {
 
 export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
   findById: async ({ teamId, id }): Promise<Technology> => {
-    const db = await makeDb();
+    try {
+      const db = await makeDb();
 
-    const result = await db.query<{
-      id: string;
-      category: TechnologyCategory;
-      maturity: TechnologyMaturity;
-      name: string;
-      description: string;
-      descriptionclassification: string;
-    }>(
-      "SELECT id, category, maturity, name, description, descriptionClassification FROM technology WHERE team_id = $1 AND id = $2",
-      [teamId, id]
-    );
-    const technologyResult = result.rows[0];
-    if (!technologyResult) throw new Error("Technology not found.");
-    return makeTechnology({
-      id: technologyResult.id,
-      category: technologyResult.category,
-      maturity: technologyResult.maturity,
-      name: technologyResult.name,
-      description: technologyResult.description,
-      descriptionClassification: technologyResult.descriptionclassification,
-    });
-  },
-  previewAll: async ({ teamId, category }): Promise<TechnologyPreview[]> => {
-    const db = await makeDb();
-
-    type DbResultSet = {
-      id: string;
-      category: TechnologyCategory;
-      maturity: TechnologyMaturity;
-      name: string;
-      descriptionpreview: string;
-    };
-    let result;
-    if (category) {
-      result = await db.query<DbResultSet>(
-        "SELECT id, category, maturity, name, substring(description from 0 for 50) AS descriptionpreview FROM technology WHERE team_id = $1 AND category = $2::category",
-        [teamId, category]
+      const result = await db.query<{
+        id: string;
+        team_id: string;
+        category: TechnologyCategory;
+        maturity: TechnologyMaturity;
+        name: string;
+        description: string;
+        maturity_description: string;
+      }>(
+        "SELECT id, team_id, category, maturity, name, description, maturity_description FROM technology WHERE team_id = $1 AND id = $2",
+        [teamId, id]
       );
-    } else {
-      result = await db.query<DbResultSet>(
-        "SELECT id, category, maturity, name, substring(description from 0 for 50) AS descriptionpreview FROM technology WHERE team_id = $1",
-        [teamId]
-      );
-    }
-
-    const technologiesResult = result.rows;
-    if (!technologiesResult) throw new Error("Failed to get technologies.");
-    const technologies = technologiesResult.map((technologyResult) =>
-      makeTechnologyPreview({
+      const technologyResult = result.rows[0];
+      if (!technologyResult) throw new Error("Technology not found.");
+      return makeTechnology({
         id: technologyResult.id,
+        teamId: technologyResult.team_id,
         category: technologyResult.category,
         maturity: technologyResult.maturity,
         name: technologyResult.name,
-        descriptionPreview: technologyResult.descriptionpreview,
-      })
-    );
+        description: technologyResult.description,
+        maturityDescription: technologyResult.maturity_description,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to find technology.");
+    }
+  },
+  previewAll: async ({ teamId, category }): Promise<TechnologyPreview[]> => {
+    try {
+      const db = await makeDb();
 
-    return technologies;
+      type DbResultSet = {
+        id: string;
+        category: TechnologyCategory;
+        maturity: TechnologyMaturity;
+        name: string;
+        description_preview: string;
+      };
+      let result;
+      if (category) {
+        result = await db.query<DbResultSet>(
+          "SELECT id, category, maturity, name, substring(description from 0 for 50) AS description_preview FROM technology WHERE team_id = $1 AND category = $2::category",
+          [teamId, category]
+        );
+      } else {
+        result = await db.query<DbResultSet>(
+          "SELECT id, category, maturity, name, substring(description from 0 for 50) AS description_preview FROM technology WHERE team_id = $1",
+          [teamId]
+        );
+      }
+
+      const technologiesResult = result.rows;
+      if (!technologiesResult) throw new Error("Failed to get technologies.");
+      const technologies = technologiesResult.map((technologyResult) =>
+        makeTechnologyPreview({
+          id: technologyResult.id,
+          category: technologyResult.category,
+          maturity: technologyResult.maturity,
+          name: technologyResult.name,
+          descriptionPreview: technologyResult.description_preview,
+        })
+      );
+
+      return technologies;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to find technologies.");
+    }
+  },
   },
 });
