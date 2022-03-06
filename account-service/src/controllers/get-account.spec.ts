@@ -5,7 +5,8 @@ describe("get account controller", () => {
   it("successfully gets an account", async () => {
     const fakeAccount = makeFakeAccountData();
     const getAccount = makeGetAccount({
-      listAccount: async ({ accountId }) => ({ ...fakeAccount, id: accountId }),
+      listAccount: async ({ accountId }) =>
+        accountId === fakeAccount.id ? fakeAccount : makeFakeAccountData(),
     });
     const request = {
       headers: {
