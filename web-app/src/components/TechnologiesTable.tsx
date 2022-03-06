@@ -19,8 +19,14 @@ export const TechnologiesTable = () => {
       </Table.Header>
       <Table.Body>
         {isLoading
-          ? [1, 2, 3, 4, 5].map(() => (
-              <Table.Row>{[1, 2, 3].map(PlaceholderTableCell)}</Table.Row>
+          ? [1, 2, 3, 4, 5].map((i) => (
+              <Table.Row key={`${i}_TechnologiesTable_Row`}>
+                {[1, 2, 3].map((j) => (
+                  <PlaceholderTableCell
+                    key={`${i}_${j}_TechnologiesTable_Cell`}
+                  />
+                ))}
+              </Table.Row>
             ))
           : data.map(({ category, id, maturity, name }) => (
               <Table.Row key={id}>
