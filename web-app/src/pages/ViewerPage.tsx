@@ -1,8 +1,8 @@
+import { TechnologyCategory, TechnologyPreviewData } from "common";
 import React from "react";
 import { Grid } from "semantic-ui-react";
 import { useGetTechnologyPreviews } from "../api/useApi";
 import { CategoryCard } from "../components/CategoryCard";
-import { TechnologyCategory, TechnologyPreview } from "../typings/technology";
 
 export const ViewerPage = () => {
   const { technologyPreviews, isLoading } = useGetTechnologyPreviews();
@@ -22,7 +22,7 @@ export const ViewerPage = () => {
 
   const categoryCards: {
     category: TechnologyCategory;
-    technologyPreviews: TechnologyPreview[];
+    technologyPreviews: TechnologyPreviewData[];
   }[] = [
     { category: "techniques", technologyPreviews: techniqueTechnologyPreviews },
     { category: "platforms", technologyPreviews: platformTechnologyPreviews },

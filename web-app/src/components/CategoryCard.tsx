@@ -1,12 +1,12 @@
+import { TechnologyCategory, TechnologyPreviewData } from "common";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Grid, Header } from "semantic-ui-react";
-import { TechnologyCategory, TechnologyPreview } from "../typings/technology";
 import { TechnologyList } from "./TechnologyList";
 
 interface CategoryCardProps {
   category: TechnologyCategory;
-  technologyPreviews: TechnologyPreview[];
+  technologyPreviews: TechnologyPreviewData[];
   isLoading: boolean;
 }
 

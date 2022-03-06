@@ -1,14 +1,14 @@
+import { TechnologyPreviewData } from "common";
 import React, { Fragment } from "react";
 import { List } from "semantic-ui-react";
 import { useStore } from "../state-management/store";
-import { TechnologyPreview } from "../typings/technology";
 import {
   PlaceholderHeaderWithTwoLines,
   PlaceholderThreeLines,
 } from "./Placeholders";
 
 interface TechnologyListProps {
-  technologyPreviews: TechnologyPreview[];
+  technologyPreviews: TechnologyPreviewData[];
   detailed?: boolean;
   isLoading: boolean;
 }

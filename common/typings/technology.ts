@@ -6,7 +6,7 @@ export type TechnologyCategory =
 
 export type TechnologyMaturity = "assess" | "trial" | "adopt" | "hold";
 
-export interface TechnologyPreview {
+export interface TechnologyPreviewData {
   id: string;
   category: TechnologyCategory;
   maturity: TechnologyMaturity;
@@ -14,7 +14,7 @@ export interface TechnologyPreview {
   descriptionPreview: string;
 }
 
-export interface Technology {
+export interface TechnologyData {
   id: string;
   category: TechnologyCategory;
   maturity: TechnologyMaturity;

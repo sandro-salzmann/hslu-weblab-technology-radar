@@ -1,10 +1,10 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect, useState } from "react";
 import {
-  Technology,
   TechnologyCategory,
-  TechnologyPreview,
-} from "../typings/technology";
+  TechnologyData,
+  TechnologyPreviewData,
+} from "common";
+import { useEffect, useState } from "react";
 import { useAuthFetch } from "../utils/useAuthFetch";
 
 export const useGetTechnologyPreviews = (category?: TechnologyCategory) => {
@@ -12,7 +12,7 @@ export const useGetTechnologyPreviews = (category?: TechnologyCategory) => {
   const { isAuthenticated } = useAuth0();
 
   const [technologyPreviews, setTechnologyPreviews] =
-    useState<TechnologyPreview[]>();
+    useState<TechnologyPreviewData[]>();
   const [hasError, setHasError] = useState<boolean>(false);
 
   const fetchTechnologyPreviews = async () => {
@@ -20,8 +20,7 @@ export const useGetTechnologyPreviews = (category?: TechnologyCategory) => {
       setHasError(false);
       setTechnologyPreviews(undefined);
       const results = (await authFetch(
-        `/technology?preview=true${category ? `&category=${category}` : ""}`
-      )) as TechnologyPreview[];
+      )) as TechnologyPreviewData[];
       setTechnologyPreviews(results);
     } catch (error) {
       console.error(error);
@@ -44,14 +43,14 @@ export const useGetTechnology = (id?: string) => {
   const { authFetch } = useAuthFetch();
   const { isAuthenticated } = useAuth0();
 
-  const [technology, setTechnology] = useState<Technology>();
+  const [technology, setTechnology] = useState<TechnologyData>();
   const [hasError, setHasError] = useState<boolean>(false);
 
   const fetchTechnology = async () => {
     try {
       setHasError(false);
       setTechnology(undefined);
-      const results = (await authFetch(`/technology?id=${id}`)) as Technology;
+      const results = (await authFetch(`/technology/${id}`)) as TechnologyData;
       setTechnology(results);
     } catch (error) {
       console.error(error);

@@ -1,14 +1,14 @@
+import {
+  TechnologyCategory,
+  TechnologyMaturity,
+  TechnologyPreviewData,
+} from "common";
 import React, { Fragment } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Grid } from "semantic-ui-react";
 import { useGetTechnologyPreviews } from "../api/useApi";
 import { CategorySelection } from "../components/CategorySelection";
 import { MaturityCard } from "../components/MaturityCard";
-import {
-  TechnologyCategory,
-  TechnologyMaturity,
-  TechnologyPreview,
-} from "../typings/technology";
 
 interface CategoryPageProps {
   category: TechnologyCategory;
@@ -40,7 +40,7 @@ export const CategoryPage = ({ category }: CategoryPageProps) => {
 
   const maturityCards: {
     maturity: TechnologyMaturity;
-    technologyPreviews: TechnologyPreview[];
+    technologyPreviews: TechnologyPreviewData[];
   }[] = [
     {
       maturity: "assess",

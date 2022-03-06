@@ -1,4 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { TechnologyCategory } from "common";
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Divider, Icon, Message } from "semantic-ui-react";
@@ -8,7 +9,6 @@ import { AdminPage } from "./pages/AdminPage";
 import { CategoryPage } from "./pages/CategoryPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ViewerPage } from "./pages/ViewerPage";
-import { TechnologyCategory } from "./typings/technology";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();

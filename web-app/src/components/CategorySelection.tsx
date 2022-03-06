@@ -1,6 +1,6 @@
+import { TechnologyCategory } from "common";
 import React from "react";
 import { Dropdown, DropdownProps } from "semantic-ui-react";
-import { TechnologyCategory } from "../typings/technology";
 
 interface CategorySelectionProps {
   value: TechnologyCategory;

@@ -1,11 +1,11 @@
+import { TechnologyMaturity, TechnologyPreviewData } from "common";
 import { Card } from "semantic-ui-react";
-import { TechnologyMaturity, TechnologyPreview } from "../typings/technology";
 import { toCapitalize } from "../utils/toCapitalize";
 import { TechnologyList } from "./TechnologyList";
 
 interface MaturityCardProps {
   maturity: TechnologyMaturity;
-  technologyPreviews: TechnologyPreview[];
+  technologyPreviews: TechnologyPreviewData[];
   isLoading: boolean;
 }
 
