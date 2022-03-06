@@ -17,6 +17,7 @@ export const useAuthFetch = () => {
     const result = await fetch(process.env.REACT_APP_AUTH0_AUDIENCE + input, {
       ...init,
       headers: {
+        ...init.headers,
         Authorization: `Bearer ${accessToken}`,
       },
     });
