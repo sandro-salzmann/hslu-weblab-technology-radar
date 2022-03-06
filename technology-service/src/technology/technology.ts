@@ -2,9 +2,10 @@ import { TechnologyCategory, TechnologyData, TechnologyMaturity } from "common";
 import { IdUtils } from "../Id";
 
 export interface Technology {
+  getTeamId: () => string;
   getId: () => string;
   getCategory: () => TechnologyCategory;
-  getMaturity: () => TechnologyMaturity;
+  getMaturity: () => TechnologyMaturity | undefined;
   getName: () => string;
   getDescription: () => string;
   getMaturityDescription: () => string | undefined;
@@ -16,9 +17,10 @@ interface BuildMakeTechnologyFnProps {
   sanitizeText: (text: string) => string;
 }
 export interface MakeTechnologyFnProps {
-  id: string;
+  teamId: string;
+  id?: string;
   category: TechnologyCategory;
-  maturity: TechnologyMaturity;
+  maturity?: TechnologyMaturity;
   name: string;
   description: string;
   maturityDescription?: string;
@@ -31,7 +33,8 @@ type MakeTechnologyFn = (props: MakeTechnologyFnProps) => Technology;
 export const buildMakeTechnology: BuildMakeTechnologyFn =
   ({ Id, sanitizeText }) =>
   ({
-    id,
+    id = Id.makeId(),
+    teamId,
     category,
     maturity,
     name,
@@ -41,10 +44,13 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     if (!id || !Id.isValidId(id)) {
       throw new Error("Technology must have a valid id.");
     }
+    if (!teamId || !Id.isValidId(teamId)) {
+      throw new Error("Technology must have a valid team id.");
+    }
     if (!["techniques", "platforms", "tools", "languages"].includes(category)) {
       throw new Error("Technology must have a valid category.");
     }
-    if (!["assess", "trial", "adopt", "hold"].includes(maturity)) {
+    if (maturity && !["assess", "trial", "adopt", "hold"].includes(maturity)) {
       throw new Error("Technology must have a valid maturity.");
     }
     if (!name) {
@@ -74,6 +80,7 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
 
     return Object.freeze({
       getId: () => id,
+      getTeamId: () => teamId,
       getCategory: () => category,
       getMaturity: () => maturity,
       getName: () => sanitizedName,
@@ -83,6 +90,7 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
         id,
         category,
         maturity,
+        teamId,
         name: sanitizedName,
         description: sanitizedDescription,
         maturityDescription: sanitizedMaturityDescription,

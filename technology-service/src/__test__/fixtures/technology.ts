@@ -15,6 +15,7 @@ export function makeFakeTechnologyData(overrides = {}): TechnologyData {
     name: faker.lorem.word(),
     description: faker.lorem.paragraphs(3),
     maturityDescription: faker.lorem.paragraphs(2),
+    teamId: Id.makeId(),
   };
 
   return {

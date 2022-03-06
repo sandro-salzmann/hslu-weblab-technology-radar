@@ -20,20 +20,31 @@ describe("technology db", () => {
   });
 
   const insertExampleTechnologies = async () => {
-    const teamIdTechnology1 = makeFakeTechnologyData({ category: "platforms" });
-    const teamIdTechnology2 = makeFakeTechnologyData({ category: "tools" });
-    const teamIdTechnology3 = makeFakeTechnologyData({ category: "platforms" });
-
-    const otherTeamIdTechnology = makeFakeTechnologyData();
-
     const teamId = Id.makeId();
     const otherTeamId = Id.makeId();
-    await insertTechnology(teamIdTechnology1, teamId);
-    await insertTechnology(teamIdTechnology2, teamId);
-    await insertTechnology(otherTeamIdTechnology, otherTeamId);
-    await insertTechnology(teamIdTechnology3, teamId);
-    await insertTechnology(makeFakeTechnologyData(), otherTeamId);
-    await insertTechnology(makeFakeTechnologyData(), Id.makeId());
+    const teamIdTechnology1 = makeFakeTechnologyData({
+      category: "platforms",
+      teamId,
+    });
+    const teamIdTechnology2 = makeFakeTechnologyData({
+      category: "tools",
+      teamId,
+    });
+    const teamIdTechnology3 = makeFakeTechnologyData({
+      category: "platforms",
+      teamId,
+    });
+
+    const otherTeamIdTechnology = makeFakeTechnologyData({
+      teamId: otherTeamId,
+    });
+
+    await insertTechnology(teamIdTechnology1);
+    await insertTechnology(teamIdTechnology2);
+    await insertTechnology(otherTeamIdTechnology);
+    await insertTechnology(teamIdTechnology3);
+    await insertTechnology(makeFakeTechnologyData({ teamId: otherTeamId }));
+    await insertTechnology(makeFakeTechnologyData({ teamId: Id.makeId() }));
 
     return {
       teamIdTechnology1,

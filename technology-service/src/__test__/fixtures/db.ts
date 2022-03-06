@@ -61,9 +61,9 @@ export async function insertTechnology(
     category,
     maturity,
     description,
-    descriptionClassification,
-  }: TechnologyData,
-  teamId: string
+    maturityDescription,
+    teamId
+  }: TechnologyData
 ) {
   await pool.query(
     "INSERT INTO technology(id, team_id, category, maturity, name, description, maturity_description) VALUES($1,$2,$3,$4,$5,$6,$7)",

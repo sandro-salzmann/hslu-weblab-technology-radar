@@ -40,20 +40,28 @@ describe("preview technologies", () => {
   });
 
   const insertExampleTechnologies = async () => {
-    const firstTechnology = makeFakeTechnologyData({ category: "tools" });
-    const secondTechnology = makeFakeTechnologyData({ category: "platforms" });
-    const thirdTechnology = makeFakeTechnologyData({ category: "tools" });
+    const teamId = Id.makeId();
+    const firstTechnology = makeFakeTechnologyData({
+      category: "tools",
+      teamId,
+    });
+    const secondTechnology = makeFakeTechnologyData({
+      category: "platforms",
+      teamId,
+    });
+    const thirdTechnology = makeFakeTechnologyData({
+      category: "tools",
+      teamId,
+    });
     const firstTechnologyPreview = makeTechnologyPreviewOf(firstTechnology);
     const secondTechnologyPreview = makeTechnologyPreviewOf(secondTechnology);
     const thirdTechnologyPreview = makeTechnologyPreviewOf(thirdTechnology);
 
-    const teamId = Id.makeId();
-
-    await insertTechnology(firstTechnology, teamId);
-    await insertTechnology(secondTechnology, teamId);
-    await insertTechnology(thirdTechnology, teamId);
-    await insertTechnology(makeFakeTechnologyData(), Id.makeId());
-    await insertTechnology(makeFakeTechnologyData(), Id.makeId());
+    await insertTechnology(firstTechnology);
+    await insertTechnology(secondTechnology);
+    await insertTechnology(thirdTechnology);
+    await insertTechnology(makeFakeTechnologyData({ teamId: Id.makeId() }));
+    await insertTechnology(makeFakeTechnologyData({ teamId: Id.makeId() }));
 
     return {
       teamId,
