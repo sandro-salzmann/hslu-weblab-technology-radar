@@ -16,9 +16,11 @@ export interface TechnologyPreviewData {
 
 export interface TechnologyData {
   id: string;
+  teamId: string;
   category: TechnologyCategory;
-  maturity: TechnologyMaturity;
   name: string;
   description: string;
-  descriptionClassification: string;
+
+  maturity?: TechnologyMaturity;
+  maturityDescription?: string;
 }

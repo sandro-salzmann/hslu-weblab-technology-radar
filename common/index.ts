@@ -1,4 +1,5 @@
 import type { AccountRole, Authorization } from "./typings/account";
+import { PostTechnologyBody } from "./typings/api/technology";
 import type {
   TechnologyCategory,
   TechnologyData,
@@ -13,4 +14,5 @@ export type {
   TechnologyData,
   AccountRole,
   Authorization,
+  PostTechnologyBody,
 };

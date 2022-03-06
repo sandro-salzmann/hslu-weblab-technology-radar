@@ -1,15 +1,7 @@
-import { TechnologyCategory, TechnologyMaturity } from "common";
+import { PostTechnologyBody } from "common";
 import { useMutation, useQueryClient } from "react-query";
 import { MessageProps } from "semantic-ui-react";
 import { useAuthFetch } from "../utils/useAuthFetch";
-
-export interface AddTechnologyBody {
-  name: string;
-  category: TechnologyCategory;
-  maturity?: TechnologyMaturity;
-  description: string;
-  maturityDescription?: string;
-}
 
 interface UseAddTechnologyProps {
   addMessage: (props: MessageProps) => void;
