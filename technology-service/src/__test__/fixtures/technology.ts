@@ -14,7 +14,7 @@ export function makeFakeTechnologyData(overrides = {}): TechnologyData {
     maturity: faker.random.arrayElement(["assess", "trial", "adopt", "hold"]),
     name: faker.lorem.word(),
     description: faker.lorem.paragraphs(3),
-    descriptionClassification: faker.lorem.paragraphs(2),
+    maturityDescription: faker.lorem.paragraphs(2),
   };
 
   return {

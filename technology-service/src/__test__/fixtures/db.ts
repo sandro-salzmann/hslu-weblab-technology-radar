@@ -34,13 +34,13 @@ db.public.registerFunction({
 // init schema
 db.public.query(`
 CREATE TABLE technology (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-    team_id uuid NOT NULL,
-    category category,
-    maturity maturity,
-    name varchar,
-    description varchar,
-    descriptionClassification varchar
+  id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+  team_id uuid NOT NULL,
+  category category,
+  maturity maturity,
+  name varchar,
+  description varchar,
+  maturity_description varchar
 );`);
 
 // make a database snapshot to restore from it later
@@ -66,7 +66,7 @@ export async function insertTechnology(
   teamId: string
 ) {
   await pool.query(
-    "INSERT INTO technology(id, team_id, category, maturity, name, description, descriptionClassification) VALUES($1,$2,$3,$4,$5,$6,$7)",
+    "INSERT INTO technology(id, team_id, category, maturity, name, description, maturity_description) VALUES($1,$2,$3,$4,$5,$6,$7)",
     [
       id,
       teamId,
@@ -74,7 +74,7 @@ export async function insertTechnology(
       maturity,
       name,
       description,
-      descriptionClassification,
+      maturityDescription,
     ]
   );
 }

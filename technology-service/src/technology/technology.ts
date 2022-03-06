@@ -7,7 +7,7 @@ export interface Technology {
   getMaturity: () => TechnologyMaturity;
   getName: () => string;
   getDescription: () => string;
-  getDescriptionClassification: () => string;
+  getMaturityDescription: () => string | undefined;
   getTechnologyData: () => TechnologyData;
 }
 
@@ -21,7 +21,7 @@ export interface MakeTechnologyFnProps {
   maturity: TechnologyMaturity;
   name: string;
   description: string;
-  descriptionClassification: string;
+  maturityDescription?: string;
 }
 type BuildMakeTechnologyFn = (
   props: BuildMakeTechnologyFnProps
@@ -36,7 +36,7 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     maturity,
     name,
     description,
-    descriptionClassification,
+    maturityDescription,
   }) => {
     if (!id || !Id.isValidId(id)) {
       throw new Error("Technology must have a valid id.");
@@ -53,7 +53,7 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     if (!description) {
       throw new Error("Technology must have a description.");
     }
-    if (!descriptionClassification) {
+    if (!maturityDescription) {
       throw new Error("Technology must have a classification description.");
     }
 
@@ -65,10 +65,10 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     if (sanitizedDescription.length < 1) {
       throw new Error("Description contains no usable text.");
     }
-    const sanitizedDescriptionClassification = sanitizeText(
-      descriptionClassification
+    const sanitizedMaturityDescription = sanitizeText(
+      maturityDescription
     );
-    if (sanitizedDescriptionClassification.length < 1) {
+    if (sanitizedMaturityDescription.length < 1) {
       throw new Error("Classification description contains no usable text.");
     }
 
@@ -78,14 +78,14 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
       getMaturity: () => maturity,
       getName: () => sanitizedName,
       getDescription: () => sanitizedDescription,
-      getDescriptionClassification: () => sanitizedDescriptionClassification,
+      getMaturityDescription: () => sanitizedMaturityDescription,
       getTechnologyData: () => ({
         id,
         category,
         maturity,
         name: sanitizedName,
         description: sanitizedDescription,
-        descriptionClassification: sanitizedDescriptionClassification,
+        maturityDescription: sanitizedMaturityDescription,
       }),
     });
   };

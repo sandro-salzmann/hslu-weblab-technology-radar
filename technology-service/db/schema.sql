@@ -16,5 +16,5 @@ CREATE TABLE technology (
     maturity maturity,
     name varchar,
     description varchar,
-    descriptionClassification varchar
+    maturity_description varchar
 );
