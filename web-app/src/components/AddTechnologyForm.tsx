@@ -1,3 +1,4 @@
+import { PostTechnologyBody } from "common";
 import React, { useState } from "react";
 import {
   DropdownProps,
@@ -6,7 +7,7 @@ import {
   InputOnChangeData,
   TextAreaProps,
 } from "semantic-ui-react";
-import { AddTechnologyBody, useAddTechnology } from "../api/useMutations";
+import { useAddTechnology } from "../api/useMutations";
 import { useMessageQueue } from "../hooks/useMessageQueue";
 
 const categoryOptions = [
@@ -23,16 +24,19 @@ const maturityOptions = [
   { key: "hold", text: "Hold", value: "hold" },
 ];
 
-const defaultValues: AddTechnologyBody = {
+const defaultValues: PostTechnologyBody = {
   name: "",
   // @ts-ignore to use placeholder in category dropdown
   category: "",
   description: "",
+  // @ts-ignore to use placeholder in category dropdown
+  maturity: "",
+  maturityDescription: "",
 };
 
 export const AddTechnologyForm = () => {
   const { Messages, addMessage } = useMessageQueue();
-  const [values, setValues] = useState<AddTechnologyBody>(defaultValues);
+  const [values, setValues] = useState<PostTechnologyBody>(defaultValues);
   const { mutate, isLoading } = useAddTechnology({
     addMessage,
     onSuccess: () => setValues(defaultValues),
@@ -58,6 +62,8 @@ export const AddTechnologyForm = () => {
     _data: FormProps
   ) => mutate(values);
 
+  const { name, category, description, maturity, maturityDescription } = values;
+
   return (
     <Form onSubmit={onSubmit}>
       <Form.Group widths="equal">
@@ -68,6 +74,7 @@ export const AddTechnologyForm = () => {
           required
           name="name"
           onChange={onChangeInput}
+          value={name}
         />
         <Form.Select
           fluid
@@ -78,6 +85,7 @@ export const AddTechnologyForm = () => {
           clearable
           name="category"
           onChange={onChangeSelect}
+          value={category}
         />
         <Form.Select
           fluid
@@ -87,6 +95,7 @@ export const AddTechnologyForm = () => {
           clearable
           name="maturity"
           onChange={onChangeSelect}
+          value={maturity}
         />
       </Form.Group>
       <Form.TextArea
@@ -95,12 +104,14 @@ export const AddTechnologyForm = () => {
         required
         name="description"
         onChange={onChangeTextarea}
+        value={description}
       />
       <Form.TextArea
         label="Beschreibung der Einordnung"
         placeholder="Beschreibung warum die Einordnung gewählt wurde..."
         name="maturityDescription"
         onChange={onChangeTextarea}
+        value={maturityDescription}
       />
       <Form.Button primary disabled={isLoading} loading={isLoading}>
         Hinzufügen

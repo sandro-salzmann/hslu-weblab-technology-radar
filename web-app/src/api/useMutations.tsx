@@ -13,8 +13,10 @@ export const useAddTechnology = ({
   onSuccess,
 }: UseAddTechnologyProps) => {
   const { authFetch } = useAuthFetch();
+  const queryClient = useQueryClient();
 
   return useMutation(
+    (technology: PostTechnologyBody) =>
       authFetch(
         `/technology`,
         {
@@ -25,6 +27,24 @@ export const useAddTechnology = ({
         201
       ),
     {
+      onError: (error, variables, context) => {
+        addMessage({
+          negative: true,
+          header: "Failed to add technology!",
+          content: "error",
+          icon: "warning sign",
+        });
+      },
+      onSuccess: (data, postTechnologyBody, context) => {
+        queryClient.refetchQueries(["technology-previews"]);
+        // TODO: use setQueryData instead of refetchQueries
+        addMessage({
+          positive: true,
+          header: "Successfully added technology!",
+          icon: "check circle outline",
+        });
+        onSuccess();
+      },
     }
   );
 };
