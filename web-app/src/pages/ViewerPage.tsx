@@ -33,7 +33,7 @@ export const ViewerPage = () => {
   return (
     <Grid stackable columns={2}>
       {categoryCards.map((cardData) => (
-        <Grid.Column>
+        <Grid.Column key={cardData.category}>
           <CategoryCard {...cardData} isLoading={isLoading} />
         </Grid.Column>
       ))}
