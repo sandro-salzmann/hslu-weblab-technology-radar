@@ -1,3 +1,4 @@
+import { makeTechnology } from "../technology";
 import {
   insertTechnology,
   makeDb,
@@ -121,6 +122,25 @@ describe("technology db", () => {
     expect(foundNone.length).toEqual(0);
   });
 
+  it("adds a technology", async () => {
+    const technology = makeTechnology(makeFakeTechnologyData());
+    await technologyDb.addTechnology(technology);
+
+    const found = await technologyDb.findById({
+      id: technology.getId(),
+      teamId: technology.getTeamId(),
+    });
+    expect(found.getTechnologyData()).toEqual(technology.getTechnologyData());
+  });
+
+  it("doesn't add the same technology twice", async () => {
+    const technology = makeTechnology(makeFakeTechnologyData());
+    await technologyDb.addTechnology(technology);
+    expect(() => technologyDb.addTechnology(technology)).rejects.toThrow(
+      "Failed to add technologies."
+    );
+  });
+
   it("doesnt throw internal errors (previewAll)", () => {
     // @ts-ignore to test internal db errors
     const technologyDb = makeTechnologyDb({ makeDb: () => null });
@@ -135,5 +155,13 @@ describe("technology db", () => {
     expect(() =>
       technologyDb.findById({ teamId: Id.makeId(), id: Id.makeId() })
     ).rejects.toThrow("Failed to find technology.");
+  });
+
+  it("doesnt throw internal errors (addTechnology)", () => {
+    // @ts-ignore to test internal db errors
+    const technologyDb = makeTechnologyDb({ makeDb: () => null });
+    expect(() =>
+      technologyDb.addTechnology(makeTechnology(makeFakeTechnologyData()))
+    ).rejects.toThrow("Failed to add technologies.");
   });
 });

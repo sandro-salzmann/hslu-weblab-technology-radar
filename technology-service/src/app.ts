@@ -2,7 +2,11 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
 import { ENV } from "./config/config";
-import { technologyController } from "./controllers";
+import {
+  getTechnologiesPreview,
+  getTechnology,
+  postTechnology,
+} from "./controllers";
 import { notFound } from "./controllers/not-found";
 import { makeExpressCallback } from "./express-callback";
 
@@ -18,9 +22,9 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // Routes
-const { getTechnologiesPreview, getTechnology } = technologyController;
 app.get("/preview", makeExpressCallback(getTechnologiesPreview));
 app.get("/:id", makeExpressCallback(getTechnology));
+app.post("/", makeExpressCallback(postTechnology));
 app.use(makeExpressCallback(notFound));
 
 app.listen(ENV.port, () => {
