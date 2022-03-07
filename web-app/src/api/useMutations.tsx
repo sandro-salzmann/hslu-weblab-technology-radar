@@ -1,4 +1,4 @@
-import { PostTechnologyBody } from "common";
+import { PatchTechnologyBody, PostTechnologyBody } from "common";
 import { useMutation, useQueryClient } from "react-query";
 import { MessageProps } from "semantic-ui-react";
 import { useAuthFetch } from "../utils/useAuthFetch";
@@ -43,6 +43,39 @@ export const useAddTechnology = ({
           header: "Successfully added technology!",
           icon: "check circle outline",
         });
+        onSuccess();
+      },
+    }
+  );
+};
+
+interface UsePatchTechnologyProps {
+  onSuccess: () => void;
+}
+
+export const usePatchTechnology = ({ onSuccess }: UsePatchTechnologyProps) => {
+  const { authFetch } = useAuthFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (technology: PatchTechnologyBody) =>
+      authFetch(
+        `/technology`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(technology),
+          headers: { "Content-Type": "application/json" },
+        },
+        200
+      ),
+    {
+      onError: (error, variables, context) => {
+        console.error(error);
+        alert(`Failed to publish category! (${error})`);
+      },
+      onSuccess: async (data, postTechnologyBody, context) => {
+        await queryClient.refetchQueries(["technology-previews"]);
+        // TODO: use setQueryData instead of refetchQueries
         onSuccess();
       },
     }

@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Grid } from "semantic-ui-react";
 import { AddTechnologyForm } from "../components/AddTechnologyForm";
+import { PublishTechnologyModal } from "../components/PublishTechnologyModal";
 import { TechnologiesTable } from "../components/TechnologiesTable";
 
 export const AdminPage = () => {
@@ -11,6 +12,7 @@ export const AdminPage = () => {
 
   return (
     <Fragment>
+      <PublishTechnologyModal />
       <Button
         content="Back"
         onClick={onBackClick}
