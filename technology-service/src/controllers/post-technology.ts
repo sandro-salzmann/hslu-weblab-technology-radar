@@ -24,10 +24,14 @@ export const makePostTechnology =
       if (error) throw new Error(`Config validation error: ${error.message}`);
       if (!validatedBody) throw new Error("Validation failed.");
 
-      const { id } = await addTechnology({
-        teamId: authorization.teamId,
-        ...validatedBody,
-      }, authorization.accountId);
+      const { id } = await addTechnology(
+        {
+          teamId: authorization.teamId,
+          ...validatedBody,
+        },
+        authorization.accountId,
+        authorization.teamRole
+      );
       return {
         headers,
         statusCode: 201,

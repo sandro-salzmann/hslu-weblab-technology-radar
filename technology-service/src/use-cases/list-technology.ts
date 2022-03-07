@@ -1,4 +1,4 @@
-import { TechnologyData } from "common";
+import { AccountRole, TechnologyData } from "common";
 import { TechnologyDb } from "../data-access/technology-db";
 
 interface BuildListTechnologyFnProps {
@@ -7,6 +7,7 @@ interface BuildListTechnologyFnProps {
 interface ListTechnologyFnProps {
   technologyId: string;
   teamId: string;
+  teamRole: AccountRole;
 }
 type BuildListTechnologyFn = (
   props: BuildListTechnologyFnProps
@@ -17,7 +18,7 @@ export type ListTechnologyFn = (
 
 export const buildListTechnology: BuildListTechnologyFn =
   ({ technologyDb }) =>
-  async ({ technologyId, teamId }) => {
+  async ({ technologyId, teamId, teamRole }) => {
     if (!technologyId) {
       throw new Error("You must supply a technology id.");
     }
@@ -29,6 +30,12 @@ export const buildListTechnology: BuildListTechnologyFn =
       id: technologyId,
       teamId,
     });
+
+    if (teamRole === "MEMBER" && !technology.getPublished()) {
+      throw new Error(
+        "You don't have permissions to view unpublished technologies."
+      );
+    }
 
     return technology.getTechnologyData();
   };

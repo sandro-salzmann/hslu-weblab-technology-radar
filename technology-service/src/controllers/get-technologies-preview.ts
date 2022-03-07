@@ -43,6 +43,7 @@ export const makeGetTechnologiesPreview: MakeGetTechnologiesPreviewFn =
 
       const technologiesPreview = await previewTechnologies({
         teamId: authorization.teamId,
+        teamRole: authorization.teamRole,
         category: validatedQuery.category,
       });
       return {

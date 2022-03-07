@@ -12,6 +12,22 @@ describe("technology-preview", () => {
       "Technology must have a valid id."
     );
   });
+  it("must have a valid published status", () => {
+    const nullStatus = makeFakeTechnologyData({ published: null });
+    expect(() => makeTechnology(nullStatus)).toThrow(
+      "Technology must have a valid published status."
+    );
+    const invalidStatus = makeFakeTechnologyData({ published: "invalid" });
+    expect(() => makeTechnology(invalidStatus)).toThrow(
+      "Technology must have a valid published status."
+    );
+  });
+  it("can have a valid published status", () => {
+    const notPublished = makeFakeTechnologyData({ published: false });
+    expect(() => makeTechnology(notPublished)).not.toThrow();
+    const technology = makeTechnology(notPublished);
+    expect(technology.getPublished()).toBe(false);
+  });
   it("must have a valid category", () => {
     const nullCategory = makeFakeTechnologyData({ category: null });
     expect(() => makeTechnology(nullCategory)).toThrow(

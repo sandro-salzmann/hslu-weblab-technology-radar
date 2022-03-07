@@ -3,6 +3,8 @@ import { IdUtils } from "../Id";
 
 export interface Technology {
   getTeamId: () => string;
+  getPublished: () => boolean;
+  getPublishedAt: () => string | undefined;
   getId: () => string;
   getCategory: () => TechnologyCategory;
   getMaturity: () => TechnologyMaturity | undefined;
@@ -19,6 +21,8 @@ interface BuildMakeTechnologyFnProps {
 export interface MakeTechnologyFnProps {
   teamId: string;
   id?: string;
+  published?: boolean;
+  publishedAt?: string;
   category: TechnologyCategory;
   maturity?: TechnologyMaturity;
   name: string;
@@ -35,13 +39,15 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
   ({
     id = Id.makeId(),
     teamId,
+    published = false,
+    publishedAt,
     category,
     maturity,
     name,
     description,
     maturityDescription,
   }) => {
-    if (!id || !Id.isValidId(id)) {
+    if (!Id.isValidId(id)) {
       throw new Error("Technology must have a valid id.");
     }
     if (!teamId || !Id.isValidId(teamId)) {
@@ -52,6 +58,9 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     }
     if (maturity && !["assess", "trial", "adopt", "hold"].includes(maturity)) {
       throw new Error("Technology must have a valid maturity.");
+    }
+    if (![true, false].includes(published)) {
+      throw new Error("Technology must have a valid published status.");
     }
     if (!name) {
       throw new Error("Technology must have a name.");
@@ -71,9 +80,7 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     if (sanitizedDescription.length < 1) {
       throw new Error("Description contains no usable text.");
     }
-    const sanitizedMaturityDescription = sanitizeText(
-      maturityDescription
-    );
+    const sanitizedMaturityDescription = sanitizeText(maturityDescription);
     if (sanitizedMaturityDescription.length < 1) {
       throw new Error("Classification description contains no usable text.");
     }
@@ -83,6 +90,8 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
       getTeamId: () => teamId,
       getCategory: () => category,
       getMaturity: () => maturity,
+      getPublished: () => published,
+      getPublishedAt: () => publishedAt,
       getName: () => sanitizedName,
       getDescription: () => sanitizedDescription,
       getMaturityDescription: () => sanitizedMaturityDescription,
@@ -91,6 +100,8 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
         category,
         maturity,
         teamId,
+        published,
+        publishedAt,
         name: sanitizedName,
         description: sanitizedDescription,
         maturityDescription: sanitizedMaturityDescription,

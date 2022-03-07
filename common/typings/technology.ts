@@ -12,6 +12,7 @@ export interface TechnologyPreviewData {
   maturity: TechnologyMaturity;
   name: string;
   descriptionPreview: string;
+  published: boolean;
 }
 
 export interface TechnologyData {
@@ -20,7 +21,9 @@ export interface TechnologyData {
   category: TechnologyCategory;
   name: string;
   description: string;
-
+  published: boolean;
+  
+  publishedAt?: string;
   maturity?: TechnologyMaturity;
   maturityDescription?: string;
 }

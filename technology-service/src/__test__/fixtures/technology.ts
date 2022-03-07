@@ -16,6 +16,8 @@ export function makeFakeTechnologyData(overrides = {}): TechnologyData {
     description: faker.lorem.paragraphs(3),
     maturityDescription: faker.lorem.paragraphs(2),
     teamId: Id.makeId(),
+    published: faker.random.arrayElement([true, false]),
+    publishedAt: new Date(faker.time.recent()).toUTCString(),
   };
 
   return {

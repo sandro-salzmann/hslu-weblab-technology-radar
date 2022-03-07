@@ -63,7 +63,7 @@ describe("technology db", () => {
       teamId,
       id: teamIdTechnology1.id,
     });
-    expect(found.getTechnologyData()).toEqual(teamIdTechnology1);
+    expect(found.getId()).toEqual(teamIdTechnology1.id);
   });
 
   it("doesn't find a technology by id from another team", async () => {
@@ -123,7 +123,9 @@ describe("technology db", () => {
   });
 
   it("adds a technology", async () => {
-    const technology = makeTechnology(makeFakeTechnologyData());
+    const technology = makeTechnology(
+      makeFakeTechnologyData({ publishedAt: null, published: false })
+    );
     await technologyDb.addTechnology(technology, Id.makeId());
 
     const found = await technologyDb.findById({

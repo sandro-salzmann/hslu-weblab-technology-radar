@@ -1,4 +1,4 @@
-import { TechnologyCategory, TechnologyPreviewData } from "common";
+import { AccountRole, TechnologyCategory, TechnologyPreviewData } from "common";
 import { TechnologyDb } from "../data-access/technology-db";
 
 interface BuildPreviewTechnologiesFnProps {
@@ -7,6 +7,7 @@ interface BuildPreviewTechnologiesFnProps {
 interface PreviewTechnologiesFnProps {
   category?: TechnologyCategory;
   teamId: string;
+  teamRole: AccountRole;
 }
 type BuildPreviewTechnologiesFn = (
   props: BuildPreviewTechnologiesFnProps
@@ -17,7 +18,7 @@ export type PreviewTechnologiesFn = (
 
 export const buildPreviewTechnologies: BuildPreviewTechnologiesFn =
   ({ technologyDb }) =>
-  async ({ category, teamId }) => {
+  async ({ category, teamId, teamRole }) => {
     if (!teamId) {
       throw new Error("You must supply a team id.");
     }
@@ -33,7 +34,10 @@ export const buildPreviewTechnologies: BuildPreviewTechnologiesFn =
       category,
     });
 
-    return technologyPreviews.map((technologyPreview) =>
-      technologyPreview.getTechnologyPreviewData()
-    );
+    return technologyPreviews
+      .filter(
+        (technologyPreview) =>
+          !(teamRole === "MEMBER" && !technologyPreview.getPublished())
+      )
+      .map((technologyPreview) => technologyPreview.getTechnologyPreviewData());
   };

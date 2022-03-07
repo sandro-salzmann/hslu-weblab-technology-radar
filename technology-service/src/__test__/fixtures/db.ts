@@ -42,7 +42,9 @@ CREATE TABLE technology (
   description varchar,
   maturity_description varchar,
   created_by uuid,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  published boolean DEFAULT false,
+  published_at TIMESTAMP
 );`);
 
 // make a database snapshot to restore from it later
@@ -64,11 +66,13 @@ export async function insertTechnology(
     maturity,
     description,
     maturityDescription,
-    teamId
+    teamId,
+    publishedAt,
+    published
   }: TechnologyData
 ) {
   await pool.query(
-    "INSERT INTO technology(id, team_id, category, maturity, name, description, maturity_description) VALUES($1,$2,$3,$4,$5,$6,$7)",
+    "INSERT INTO technology(id, team_id, category, maturity, name, description, maturity_description, published_at, published) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)",
     [
       id,
       teamId,
@@ -77,6 +81,8 @@ export async function insertTechnology(
       name,
       description,
       maturityDescription,
+      publishedAt,
+      published
     ]
   );
 }

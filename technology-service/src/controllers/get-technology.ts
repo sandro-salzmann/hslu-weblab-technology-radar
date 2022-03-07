@@ -40,6 +40,7 @@ export const makeGetTechnology: MakeGetTechnologyFn =
 
       const technology = await listTechnology({
         teamId: authorization.teamId,
+        teamRole: authorization.teamRole,
         technologyId: validatedParams.id,
       });
       return {
