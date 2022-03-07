@@ -24,8 +24,16 @@ describe("add technology", () => {
 
   it("requires a valid technology", () => {
     expect(
-      addTechnology(makeFakeTechnologyData({ category: "invalid" }))
+      addTechnology(
+        makeFakeTechnologyData({ category: "invalid" }),
+        Id.makeId()
+      )
     ).rejects.toThrow("Technology must have a valid category.");
+  });
+  it("requires a valid accountId", () => {
+    expect(addTechnology(makeFakeTechnologyData(), "invalid")).rejects.toThrow(
+      "You must supply a accountId"
+    );
   });
   it("can add a technology", async () => {
     const technologyDb = makeTechnologyDb({ makeDb });
@@ -34,11 +42,14 @@ describe("add technology", () => {
     const teamId = Id.makeId();
     const technology1 = makeFakeTechnologyData({ teamId });
     const technology2 = makeFakeTechnologyData({ teamId });
-    expect(addTechnology(technology1)).resolves.not.toThrow();
+    expect(addTechnology(technology1, Id.makeId())).resolves.not.toThrow();
     expect(
-      addTechnology(makeFakeTechnologyData({ teamId: Id.makeId() }))
+      addTechnology(
+        makeFakeTechnologyData({ teamId: Id.makeId() }),
+        Id.makeId()
+      )
     ).resolves.not.toThrow();
-    expect(addTechnology(technology2)).resolves.not.toThrow();
+    expect(addTechnology(technology2, Id.makeId())).resolves.not.toThrow();
     expect(previewTechnologies({ teamId })).resolves.toEqual([
       makeTechnologyPreviewOf(technology1),
       makeTechnologyPreviewOf(technology2),
@@ -51,7 +62,8 @@ describe("add technology", () => {
 
     expect(
       addTechnology(
-        makeFakeTechnologyData({ teamId, id: existingTechnology.id })
+        makeFakeTechnologyData({ teamId, id: existingTechnology.id }),
+        Id.makeId()
       )
     ).rejects.toThrow("Failed to add technologies.");
   });

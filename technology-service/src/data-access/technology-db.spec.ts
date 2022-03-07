@@ -124,7 +124,7 @@ describe("technology db", () => {
 
   it("adds a technology", async () => {
     const technology = makeTechnology(makeFakeTechnologyData());
-    await technologyDb.addTechnology(technology);
+    await technologyDb.addTechnology(technology, Id.makeId());
 
     const found = await technologyDb.findById({
       id: technology.getId(),
@@ -135,8 +135,15 @@ describe("technology db", () => {
 
   it("doesn't add the same technology twice", async () => {
     const technology = makeTechnology(makeFakeTechnologyData());
-    await technologyDb.addTechnology(technology);
-    expect(technologyDb.addTechnology(technology)).rejects.toThrow(
+    await technologyDb.addTechnology(technology, Id.makeId());
+    expect(technologyDb.addTechnology(technology, Id.makeId())).rejects.toThrow(
+      "Failed to add technologies."
+    );
+  });
+
+  it("doesn't add a technology without valid account id", async () => {
+    const technology = makeTechnology(makeFakeTechnologyData());
+    expect(technologyDb.addTechnology(technology, "Invalid")).rejects.toThrow(
       "Failed to add technologies."
     );
   });
@@ -161,7 +168,10 @@ describe("technology db", () => {
     // @ts-ignore to test internal db errors
     const technologyDb = makeTechnologyDb({ makeDb: () => null });
     expect(
-      technologyDb.addTechnology(makeTechnology(makeFakeTechnologyData()))
+      technologyDb.addTechnology(
+        makeTechnology(makeFakeTechnologyData()),
+        Id.makeId()
+      )
     ).rejects.toThrow("Failed to add technologies.");
   });
 });

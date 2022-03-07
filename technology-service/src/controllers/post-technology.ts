@@ -27,7 +27,7 @@ export const makePostTechnology =
       const { id } = await addTechnology({
         teamId: authorization.teamId,
         ...validatedBody,
-      });
+      }, authorization.accountId);
       return {
         headers,
         statusCode: 201,

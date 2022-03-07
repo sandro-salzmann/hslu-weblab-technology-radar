@@ -15,7 +15,7 @@ export interface TechnologyDb {
     teamId: string;
     category?: TechnologyCategory;
   }) => Promise<TechnologyPreview[]>;
-  addTechnology: (technology: Technology) => void;
+  addTechnology: (technology: Technology, accountId: string) => void;
 }
 
 export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
@@ -93,13 +93,13 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
       throw new Error("Failed to find technologies.");
     }
   },
-  addTechnology: async (technology) => {
+  addTechnology: async (technology, accountId) => {
     try {
       const db = await makeDb();
 
       await db.query(
-        `INSERT INTO technology(id, team_id, category, maturity, name, description, maturity_description)
-        VALUES($1,$2,$3,$4,$5,$6,$7)`,
+        `INSERT INTO technology(id, team_id, category, maturity, name, description, maturity_description, created_by)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
         [
           technology.getId(),
           technology.getTeamId(),
@@ -108,6 +108,7 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
           technology.getName(),
           technology.getDescription(),
           technology.getMaturityDescription(),
+          accountId,
         ]
       );
     } catch (error) {
