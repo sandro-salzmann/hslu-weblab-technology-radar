@@ -6,7 +6,7 @@ import {
 import React, { Fragment } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Grid } from "semantic-ui-react";
-import { useGetTechnologyPreviews } from "../api/useApi";
+import { useTechnologyPreviewsQuery } from "../api/useQueries";
 import { CategorySelection } from "../components/CategorySelection";
 import { MaturityCard } from "../components/MaturityCard";
 
@@ -15,7 +15,12 @@ interface CategoryPageProps {
 }
 
 export const CategoryPage = ({ category }: CategoryPageProps) => {
-  const { technologyPreviews, isLoading } = useGetTechnologyPreviews(category);
+  const {
+    data: technologyPreviews = [],
+    error,
+    isLoading,
+  } = useTechnologyPreviewsQuery(category);
+
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -60,7 +65,9 @@ export const CategoryPage = ({ category }: CategoryPageProps) => {
     },
   ];
 
-  return (
+  return error ? (
+    <span>Failed to get technologies ({error.message})</span>
+  ) : (
     <Fragment>
       <Button
         style={{ float: "left", position: "fixed" }}

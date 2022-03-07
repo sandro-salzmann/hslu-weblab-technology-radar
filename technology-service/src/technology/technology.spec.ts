@@ -22,15 +22,11 @@ describe("technology-preview", () => {
       "Technology must have a valid category."
     );
   });
-  it("must have a valid maturity", () => {
-    const nullMaturity = makeFakeTechnologyData({ maturity: null });
-    expect(() => makeTechnology(nullMaturity)).toThrow(
-      "Technology must have a valid maturity."
-    );
-    const invalidMaturity = makeFakeTechnologyData({ maturity: "invalid" });
-    expect(() => makeTechnology(invalidMaturity)).toThrow(
-      "Technology must have a valid maturity."
-    );
+  it("can have a valid maturity", () => {
+    const assessCategory = makeFakeTechnologyData({ maturity: "assess" });
+    expect(() => makeTechnology(assessCategory)).not.toThrow();
+    const technology = makeTechnology(assessCategory);
+    expect(technology.getMaturity()).toBe("assess");
   });
   it("can have a category", () => {
     const platformsCategory = makeFakeTechnologyData({ category: "platforms" });
@@ -69,16 +65,16 @@ describe("technology-preview", () => {
     );
   });
   it("must have a description classification", () => {
-    const nullDescriptionClassification = makeFakeTechnologyData({
-      descriptionClassification: null,
+    const nullMaturityDescription = makeFakeTechnologyData({
+      maturityDescription: null,
     });
-    expect(() => makeTechnology(nullDescriptionClassification)).toThrow(
+    expect(() => makeTechnology(nullMaturityDescription)).toThrow(
       "Technology must have a classification description."
     );
-    const emptyDescriptionClassification = makeFakeTechnologyData({
-      descriptionClassification: undefined,
+    const emptyMaturityDescription = makeFakeTechnologyData({
+      maturityDescription: undefined,
     });
-    expect(() => makeTechnology(emptyDescriptionClassification)).toThrow(
+    expect(() => makeTechnology(emptyMaturityDescription)).toThrow(
       "Technology must have a classification description."
     );
   });
@@ -100,7 +96,7 @@ describe("technology-preview", () => {
   });
   it("must sanitize the description classification", () => {
     const htmlEmptyDescription = makeFakeTechnologyData({
-      descriptionClassification: "<script></script>",
+      maturityDescription: "<script></script>",
     });
     expect(() => makeTechnology(htmlEmptyDescription)).toThrow(
       "Classification description contains no usable text."

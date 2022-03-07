@@ -1,6 +1,7 @@
 import { Auth0Provider } from "@auth0/auth0-react";
 import React from "react";
 import ReactDOM from "react-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
@@ -17,6 +18,8 @@ if (!REACT_APP_AUTH0_CLIENT_ID) {
   throw new Error("REACT_APP_AUTH0_CLIENT_ID missing!");
 }
 
+const queryClient = new QueryClient();
+
 ReactDOM.render(
   <Auth0Provider
     domain={REACT_APP_AUTH0_DOMAIN}
@@ -24,9 +27,11 @@ ReactDOM.render(
     redirectUri={window.location.origin}
     audience={REACT_APP_AUTH0_AUDIENCE}
   >
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </QueryClientProvider>
   </Auth0Provider>,
   document.getElementById("root")
 );

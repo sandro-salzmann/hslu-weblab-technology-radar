@@ -1,5 +1,5 @@
 import React from "react";
-import { Placeholder } from "semantic-ui-react";
+import { Placeholder, Table } from "semantic-ui-react";
 
 export const PlaceholderThreeLines = () => {
   return (
@@ -21,6 +21,15 @@ export const PlaceholderHeader = () => {
   );
 };
 
+export const PlaceholderTableCell = () => {
+  return (
+    <Table.Cell>
+      <Placeholder>
+        <Placeholder.Line style={{ height: 0, margin: "20px 0px" }} />
+      </Placeholder>
+    </Table.Cell>
+  );
+};
 export const PlaceholderHeaderWithTwoLines = () => {
   return (
     <Placeholder>

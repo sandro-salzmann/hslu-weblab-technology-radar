@@ -31,17 +31,17 @@ describe("list technology", () => {
     ).rejects.toThrow("You must supply a team id.");
   });
   it("gets a technology by id", async () => {
-    const firstTechnology = makeFakeTechnologyData();
-    const secondTechnology = makeFakeTechnologyData();
-    const thirdTechnology = makeFakeTechnologyData();
-
     const teamId = Id.makeId();
-    await insertTechnology(firstTechnology, teamId);
-    await insertTechnology(secondTechnology, teamId);
-    await insertTechnology(thirdTechnology, Id.makeId());
+    const firstTechnology = makeFakeTechnologyData({ teamId });
+    const secondTechnology = makeFakeTechnologyData({ teamId });
+    const thirdTechnology = makeFakeTechnologyData({ teamId: Id.makeId() });
+
+    await insertTechnology(firstTechnology);
+    await insertTechnology(secondTechnology);
+    await insertTechnology(thirdTechnology);
 
     expect(
-      await listTechnology({ teamId, technologyId: secondTechnology.id })
-    ).toEqual(secondTechnology);
+      listTechnology({ teamId, technologyId: secondTechnology.id })
+    ).resolves.toEqual(secondTechnology);
   });
 });

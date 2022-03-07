@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-DROP TABLE account technology CASCADE;
+DROP TABLE technology CASCADE;
 
 DROP TYPE category;
 DROP TYPE maturity;
@@ -16,5 +16,7 @@ CREATE TABLE technology (
     maturity maturity,
     name varchar,
     description varchar,
-    descriptionClassification varchar
+    maturity_description varchar,
+    created_by uuid,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

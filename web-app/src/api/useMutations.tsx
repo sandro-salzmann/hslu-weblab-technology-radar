@@ -1,0 +1,50 @@
+import { PostTechnologyBody } from "common";
+import { useMutation, useQueryClient } from "react-query";
+import { MessageProps } from "semantic-ui-react";
+import { useAuthFetch } from "../utils/useAuthFetch";
+
+interface UseAddTechnologyProps {
+  addMessage: (props: MessageProps) => void;
+  onSuccess: () => void;
+}
+
+export const useAddTechnology = ({
+  addMessage,
+  onSuccess,
+}: UseAddTechnologyProps) => {
+  const { authFetch } = useAuthFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (technology: PostTechnologyBody) =>
+      authFetch(
+        `/technology`,
+        {
+          method: "POST",
+          body: JSON.stringify(technology),
+          headers: { "Content-Type": "application/json" },
+        },
+        201
+      ),
+    {
+      onError: (error, variables, context) => {
+        addMessage({
+          negative: true,
+          header: "Failed to add technology!",
+          content: "error",
+          icon: "warning sign",
+        });
+      },
+      onSuccess: (data, postTechnologyBody, context) => {
+        queryClient.refetchQueries(["technology-previews"]);
+        // TODO: use setQueryData instead of refetchQueries
+        addMessage({
+          positive: true,
+          header: "Successfully added technology!",
+          icon: "check circle outline",
+        });
+        onSuccess();
+      },
+    }
+  );
+};

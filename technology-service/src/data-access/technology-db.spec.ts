@@ -1,3 +1,4 @@
+import { makeTechnology } from "../technology";
 import {
   insertTechnology,
   makeDb,
@@ -20,20 +21,31 @@ describe("technology db", () => {
   });
 
   const insertExampleTechnologies = async () => {
-    const teamIdTechnology1 = makeFakeTechnologyData({ category: "platforms" });
-    const teamIdTechnology2 = makeFakeTechnologyData({ category: "tools" });
-    const teamIdTechnology3 = makeFakeTechnologyData({ category: "platforms" });
-
-    const otherTeamIdTechnology = makeFakeTechnologyData();
-
     const teamId = Id.makeId();
     const otherTeamId = Id.makeId();
-    await insertTechnology(teamIdTechnology1, teamId);
-    await insertTechnology(teamIdTechnology2, teamId);
-    await insertTechnology(otherTeamIdTechnology, otherTeamId);
-    await insertTechnology(teamIdTechnology3, teamId);
-    await insertTechnology(makeFakeTechnologyData(), otherTeamId);
-    await insertTechnology(makeFakeTechnologyData(), Id.makeId());
+    const teamIdTechnology1 = makeFakeTechnologyData({
+      category: "platforms",
+      teamId,
+    });
+    const teamIdTechnology2 = makeFakeTechnologyData({
+      category: "tools",
+      teamId,
+    });
+    const teamIdTechnology3 = makeFakeTechnologyData({
+      category: "platforms",
+      teamId,
+    });
+
+    const otherTeamIdTechnology = makeFakeTechnologyData({
+      teamId: otherTeamId,
+    });
+
+    await insertTechnology(teamIdTechnology1);
+    await insertTechnology(teamIdTechnology2);
+    await insertTechnology(otherTeamIdTechnology);
+    await insertTechnology(teamIdTechnology3);
+    await insertTechnology(makeFakeTechnologyData({ teamId: otherTeamId }));
+    await insertTechnology(makeFakeTechnologyData({ teamId: Id.makeId() }));
 
     return {
       teamIdTechnology1,
@@ -63,7 +75,7 @@ describe("technology db", () => {
           teamId,
           id: otherTeamIdTechnology.id,
         })
-    ).rejects.toThrow("Technology not found.");
+    ).rejects.toThrow("Failed to find technology.");
   });
 
   it("previews team technologies", async () => {
@@ -108,5 +120,58 @@ describe("technology db", () => {
       category: "languages",
     });
     expect(foundNone.length).toEqual(0);
+  });
+
+  it("adds a technology", async () => {
+    const technology = makeTechnology(makeFakeTechnologyData());
+    await technologyDb.addTechnology(technology, Id.makeId());
+
+    const found = await technologyDb.findById({
+      id: technology.getId(),
+      teamId: technology.getTeamId(),
+    });
+    expect(found.getTechnologyData()).toEqual(technology.getTechnologyData());
+  });
+
+  it("doesn't add the same technology twice", async () => {
+    const technology = makeTechnology(makeFakeTechnologyData());
+    await technologyDb.addTechnology(technology, Id.makeId());
+    expect(technologyDb.addTechnology(technology, Id.makeId())).rejects.toThrow(
+      "Failed to add technologies."
+    );
+  });
+
+  it("doesn't add a technology without valid account id", async () => {
+    const technology = makeTechnology(makeFakeTechnologyData());
+    expect(technologyDb.addTechnology(technology, "Invalid")).rejects.toThrow(
+      "Failed to add technologies."
+    );
+  });
+
+  it("doesnt throw internal errors (previewAll)", () => {
+    // @ts-ignore to test internal db errors
+    const technologyDb = makeTechnologyDb({ makeDb: () => null });
+    expect(() =>
+      technologyDb.previewAll({ teamId: Id.makeId() })
+    ).rejects.toThrow("Failed to find technologies.");
+  });
+
+  it("doesnt throw internal errors (findById)", () => {
+    // @ts-ignore to test internal db errors
+    const technologyDb = makeTechnologyDb({ makeDb: () => null });
+    expect(() =>
+      technologyDb.findById({ teamId: Id.makeId(), id: Id.makeId() })
+    ).rejects.toThrow("Failed to find technology.");
+  });
+
+  it("doesnt throw internal errors (addTechnology)", () => {
+    // @ts-ignore to test internal db errors
+    const technologyDb = makeTechnologyDb({ makeDb: () => null });
+    expect(
+      technologyDb.addTechnology(
+        makeTechnology(makeFakeTechnologyData()),
+        Id.makeId()
+      )
+    ).rejects.toThrow("Failed to add technologies.");
   });
 });

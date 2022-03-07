@@ -2,12 +2,13 @@ import { TechnologyCategory, TechnologyData, TechnologyMaturity } from "common";
 import { IdUtils } from "../Id";
 
 export interface Technology {
+  getTeamId: () => string;
   getId: () => string;
   getCategory: () => TechnologyCategory;
-  getMaturity: () => TechnologyMaturity;
+  getMaturity: () => TechnologyMaturity | undefined;
   getName: () => string;
   getDescription: () => string;
-  getDescriptionClassification: () => string;
+  getMaturityDescription: () => string | undefined;
   getTechnologyData: () => TechnologyData;
 }
 
@@ -16,12 +17,13 @@ interface BuildMakeTechnologyFnProps {
   sanitizeText: (text: string) => string;
 }
 export interface MakeTechnologyFnProps {
-  id: string;
+  teamId: string;
+  id?: string;
   category: TechnologyCategory;
-  maturity: TechnologyMaturity;
+  maturity?: TechnologyMaturity;
   name: string;
   description: string;
-  descriptionClassification: string;
+  maturityDescription?: string;
 }
 type BuildMakeTechnologyFn = (
   props: BuildMakeTechnologyFnProps
@@ -31,20 +33,24 @@ type MakeTechnologyFn = (props: MakeTechnologyFnProps) => Technology;
 export const buildMakeTechnology: BuildMakeTechnologyFn =
   ({ Id, sanitizeText }) =>
   ({
-    id,
+    id = Id.makeId(),
+    teamId,
     category,
     maturity,
     name,
     description,
-    descriptionClassification,
+    maturityDescription,
   }) => {
     if (!id || !Id.isValidId(id)) {
       throw new Error("Technology must have a valid id.");
     }
+    if (!teamId || !Id.isValidId(teamId)) {
+      throw new Error("Technology must have a valid team id.");
+    }
     if (!["techniques", "platforms", "tools", "languages"].includes(category)) {
       throw new Error("Technology must have a valid category.");
     }
-    if (!["assess", "trial", "adopt", "hold"].includes(maturity)) {
+    if (maturity && !["assess", "trial", "adopt", "hold"].includes(maturity)) {
       throw new Error("Technology must have a valid maturity.");
     }
     if (!name) {
@@ -53,7 +59,7 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     if (!description) {
       throw new Error("Technology must have a description.");
     }
-    if (!descriptionClassification) {
+    if (!maturityDescription) {
       throw new Error("Technology must have a classification description.");
     }
 
@@ -65,27 +71,29 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     if (sanitizedDescription.length < 1) {
       throw new Error("Description contains no usable text.");
     }
-    const sanitizedDescriptionClassification = sanitizeText(
-      descriptionClassification
+    const sanitizedMaturityDescription = sanitizeText(
+      maturityDescription
     );
-    if (sanitizedDescriptionClassification.length < 1) {
+    if (sanitizedMaturityDescription.length < 1) {
       throw new Error("Classification description contains no usable text.");
     }
 
     return Object.freeze({
       getId: () => id,
+      getTeamId: () => teamId,
       getCategory: () => category,
       getMaturity: () => maturity,
       getName: () => sanitizedName,
       getDescription: () => sanitizedDescription,
-      getDescriptionClassification: () => sanitizedDescriptionClassification,
+      getMaturityDescription: () => sanitizedMaturityDescription,
       getTechnologyData: () => ({
         id,
         category,
         maturity,
+        teamId,
         name: sanitizedName,
         description: sanitizedDescription,
-        descriptionClassification: sanitizedDescriptionClassification,
+        maturityDescription: sanitizedMaturityDescription,
       }),
     });
   };
