@@ -79,7 +79,7 @@ describe("preview technologies", () => {
       thirdTechnologyPreview,
     } = await insertExampleTechnologies();
 
-    expect(await previewTechnology({ teamId })).toEqual([
+    expect(previewTechnology({ teamId })).resolves.toEqual([
       firstTechnologyPreview,
       secondTechnologyPreview,
       thirdTechnologyPreview,
@@ -90,7 +90,7 @@ describe("preview technologies", () => {
     const { teamId, firstTechnologyPreview, thirdTechnologyPreview } =
       await insertExampleTechnologies();
 
-    expect(await previewTechnology({ teamId, category: "tools" })).toEqual([
+    expect(previewTechnology({ teamId, category: "tools" })).resolves.toEqual([
       firstTechnologyPreview,
       thirdTechnologyPreview,
     ]);

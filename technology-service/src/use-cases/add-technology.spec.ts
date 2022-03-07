@@ -34,13 +34,12 @@ describe("add technology", () => {
     const teamId = Id.makeId();
     const technology1 = makeFakeTechnologyData({ teamId });
     const technology2 = makeFakeTechnologyData({ teamId });
-    expect(async () => await addTechnology(technology1)).not.toThrow();
+    expect(addTechnology(technology1)).resolves.not.toThrow();
     expect(
-      async () =>
-        await addTechnology(makeFakeTechnologyData({ teamId: Id.makeId() }))
-    ).not.toThrow();
-    expect(async () => await addTechnology(technology2)).not.toThrow();
-    expect(await previewTechnologies({ teamId })).toEqual([
+      addTechnology(makeFakeTechnologyData({ teamId: Id.makeId() }))
+    ).resolves.not.toThrow();
+    expect(addTechnology(technology2)).resolves.not.toThrow();
+    expect(previewTechnologies({ teamId })).resolves.toEqual([
       makeTechnologyPreviewOf(technology1),
       makeTechnologyPreviewOf(technology2),
     ]);

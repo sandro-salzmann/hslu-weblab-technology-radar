@@ -136,7 +136,7 @@ describe("technology db", () => {
   it("doesn't add the same technology twice", async () => {
     const technology = makeTechnology(makeFakeTechnologyData());
     await technologyDb.addTechnology(technology);
-    expect(() => technologyDb.addTechnology(technology)).rejects.toThrow(
+    expect(technologyDb.addTechnology(technology)).rejects.toThrow(
       "Failed to add technologies."
     );
   });
@@ -160,7 +160,7 @@ describe("technology db", () => {
   it("doesnt throw internal errors (addTechnology)", () => {
     // @ts-ignore to test internal db errors
     const technologyDb = makeTechnologyDb({ makeDb: () => null });
-    expect(() =>
+    expect(
       technologyDb.addTechnology(makeTechnology(makeFakeTechnologyData()))
     ).rejects.toThrow("Failed to add technologies.");
   });

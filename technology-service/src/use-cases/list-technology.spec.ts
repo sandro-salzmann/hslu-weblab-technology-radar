@@ -41,7 +41,7 @@ describe("list technology", () => {
     await insertTechnology(thirdTechnology);
 
     expect(
-      await listTechnology({ teamId, technologyId: secondTechnology.id })
-    ).toEqual(secondTechnology);
+      listTechnology({ teamId, technologyId: secondTechnology.id })
+    ).resolves.toEqual(secondTechnology);
   });
 });

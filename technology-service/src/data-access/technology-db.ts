@@ -47,7 +47,7 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
         maturityDescription: technologyResult.maturity_description,
       });
     } catch (error) {
-      console.error(error);
+      console.log(error);
       throw new Error("Failed to find technology.");
     }
   },
@@ -89,7 +89,7 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
 
       return technologies;
     } catch (error) {
-      console.error(error);
+      console.log(error);
       throw new Error("Failed to find technologies.");
     }
   },
@@ -111,7 +111,7 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
         ]
       );
     } catch (error) {
-      console.error(error);
+      console.log(error);
       throw new Error("Failed to add technologies.");
     }
   },
