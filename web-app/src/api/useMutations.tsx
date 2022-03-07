@@ -35,8 +35,8 @@ export const useAddTechnology = ({
           icon: "warning sign",
         });
       },
-      onSuccess: (data, postTechnologyBody, context) => {
-        queryClient.refetchQueries(["technology-previews"]);
+      onSuccess: async (data, postTechnologyBody, context) => {
+        await queryClient.refetchQueries(["technology-previews"]);
         // TODO: use setQueryData instead of refetchQueries
         addMessage({
           positive: true,
