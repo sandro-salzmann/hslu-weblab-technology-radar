@@ -9,15 +9,11 @@ import {
 } from "semantic-ui-react";
 import { useAddTechnology } from "../api/useMutations";
 import { useMessageQueue } from "../hooks/useMessageQueue";
+import { CategorySelection } from "./technology-form/CategorySelection";
+import { DescriptionInput } from "./technology-form/DescriptionInput";
 import { MaturityDescriptionInput } from "./technology-form/MaturityDescriptionInput";
 import { MaturitySelection } from "./technology-form/MaturitySelection";
-
-const categoryOptions = [
-  { key: "techniques", text: "Techniques", value: "techniques" },
-  { key: "platforms", text: "Platforms", value: "platforms" },
-  { key: "tools", text: "Tools", value: "tools" },
-  { key: "languages", text: "Languages", value: "languages" },
-];
+import { NameInput } from "./technology-form/NameInput";
 
 const defaultValues: PostTechnologyBody = {
   name: "",
@@ -62,36 +58,11 @@ export const AddTechnologyForm = () => {
   return (
     <Form onSubmit={onSubmit}>
       <Form.Group widths="equal">
-        <Form.Input
-          fluid
-          label="Name"
-          placeholder="Name"
-          required
-          name="name"
-          onChange={onChangeInput}
-          value={name}
-        />
-        <Form.Select
-          fluid
-          label="Kategorie"
-          options={categoryOptions}
-          placeholder="Kategorie"
-          required
-          clearable
-          name="category"
-          onChange={onChangeSelect}
-          value={category}
-        />
+        <NameInput onChange={onChangeInput} value={name} />
+        <CategorySelection onChange={onChangeSelect} value={category} />
         <MaturitySelection onChange={onChangeSelect} value={maturity} />
       </Form.Group>
-      <Form.TextArea
-        label="Beschreibung Technologie"
-        placeholder="Beschreibung was die Technologie macht..."
-        name="description"
-        required
-        onChange={onChangeTextarea}
-        value={description}
-      />
+      <DescriptionInput onChange={onChangeTextarea} value={description} />
       <MaturityDescriptionInput
         value={maturityDescription}
         onChange={onChangeTextarea}

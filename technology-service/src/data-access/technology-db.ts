@@ -34,8 +34,10 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
         maturity_description: string;
         published: boolean;
         published_at: string;
+        changed_by: string;
+        changed_at: string;
       }>(
-        "SELECT id, team_id, category, maturity, name, description, maturity_description, published, published_at FROM technology WHERE team_id = $1 AND id = $2",
+        "SELECT id, team_id, category, maturity, name, description, maturity_description, published, published_at, changed_by, changed_at FROM technology WHERE team_id = $1 AND id = $2",
         [teamId, id]
       );
       const technologyResult = result.rows[0];
@@ -50,6 +52,8 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
         maturityDescription: technologyResult.maturity_description,
         published: technologyResult.published,
         publishedAt: technologyResult.published_at,
+        changedBy: technologyResult.changed_by,
+        changedAt: technologyResult.changed_at,
       });
     } catch (error) {
       console.log(error);
@@ -105,8 +109,8 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
       const db = await makeDb();
 
       await db.query(
-        `INSERT INTO technology(id, team_id, category, maturity, name, description, maturity_description, created_by)
-        VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
+        `INSERT INTO technology(id, team_id, category, maturity, name, description, maturity_description, created_by, changed_at, changed_by)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
         [
           technology.getId(),
           technology.getTeamId(),
@@ -116,6 +120,8 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
           technology.getDescription(),
           technology.getMaturityDescription(),
           accountId,
+          technology.getChangedAt(),
+          technology.getChangedBy(),
         ]
       );
     } catch (error) {
@@ -129,17 +135,18 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
 
       await db.query(
         `UPDATE technology SET
-          category = COALESCE($2, category),
-          maturity = COALESCE($3, maturity),
-          name = COALESCE($4, name),
-          description = COALESCE($5, description),
-          maturity_description = COALESCE($6, maturity_description),
-          published = COALESCE($7, published),
-          published_at = COALESCE($8, published_at)
-        WHERE id = $1
-        AND team_id = $9`,
+          category = COALESCE($1, category),
+          maturity = COALESCE($2, maturity),
+          name = COALESCE($3, name),
+          description = COALESCE($4, description),
+          maturity_description = COALESCE($5, maturity_description),
+          published = COALESCE($6, published),
+          published_at = COALESCE($7, published_at),
+          changed_at = COALESCE($8, changed_at),
+          changed_by = COALESCE($9, changed_by)
+        WHERE id = $10
+        AND team_id = $11`,
         [
-          technology.getId(),
           technology.getCategory(),
           technology.getMaturity(),
           technology.getName(),
@@ -147,7 +154,10 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
           technology.getMaturityDescription(),
           technology.getPublished(),
           technology.getPublishedAt(),
-          technology.getTeamId()
+          technology.getChangedAt(),
+          technology.getChangedBy(),
+          technology.getId(),
+          technology.getTeamId(),
         ]
       );
     } catch (error) {

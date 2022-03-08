@@ -12,7 +12,15 @@ export interface Technology {
   getDescription: () => string;
   getMaturityDescription: () => string | undefined;
   getTechnologyData: () => TechnologyData;
+  getChangedBy: () => string | undefined;
+  getChangedAt: () => string | undefined;
   publish: () => void;
+  hasChanged: (byAccountId: string) => void;
+  setName: (name: string) => void;
+  setCategory: (category: TechnologyCategory) => void;
+  setDescription: (description: string) => void;
+  setMaturity: (maturity: TechnologyMaturity) => void;
+  setMaturityDescription: (maturityDescription: string) => void;
 }
 
 interface BuildMakeTechnologyFnProps {
@@ -29,6 +37,8 @@ export interface MakeTechnologyFnProps {
   name: string;
   description: string;
   maturityDescription?: string;
+  changedBy?: string;
+  changedAt?: string;
 }
 type BuildMakeTechnologyFn = (
   props: BuildMakeTechnologyFnProps
@@ -47,57 +57,121 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     name,
     description,
     maturityDescription,
+    changedBy,
+    changedAt,
   }) => {
-    if (!id || !Id.isValidId(id)) {
-      throw new Error("Technology must have a valid id.");
-    }
-    if (!teamId || !Id.isValidId(teamId)) {
-      throw new Error("Technology must have a valid team id.");
-    }
-    if (!["techniques", "platforms", "tools", "languages"].includes(category)) {
-      throw new Error("Technology must have a valid category.");
-    }
-    if (
-      (maturity && !["assess", "trial", "adopt", "hold"].includes(maturity)) ||
-      (published && !maturity)
-    ) {
-      throw new Error("Technology must have a valid maturity.");
-    }
-    if (![true, false].includes(published)) {
-      throw new Error("Technology must have a valid published status.");
-    }
-    if (!name) {
-      throw new Error("Technology must have a name.");
-    }
-    if (!description) {
-      throw new Error("Technology must have a description.");
-    }
-    if (published && !maturityDescription) {
-      throw new Error("Technology must have a classification description.");
-    }
-    if (publishedAt) {
-      try {
-        publishedAt = new Date(publishedAt).toISOString();
-      } catch (error) {
-        // publishedAt parsing failed
-        throw new Error("PublishedAt is not a valid date string.");
+    const validateId = (id?: string) => {
+      if (!id || !Id.isValidId(id)) {
+        throw new Error("Technology must have a valid id.");
       }
-    }
+      return id;
+    };
+    const validateTeamId = (teamId: string) => {
+      if (!teamId || !Id.isValidId(teamId)) {
+        throw new Error("Technology must have a valid team id.");
+      }
+      return teamId;
+    };
+    const validatePublished = (published: boolean) => {
+      if (![true, false].includes(published)) {
+        throw new Error("Technology must have a valid published status.");
+      }
+      return published;
+    };
+    const validatePublishedAt = (publishedAt?: string) => {
+      if (publishedAt) {
+        try {
+          publishedAt = new Date(publishedAt).toISOString();
+        } catch (error) {
+          // publishedAt parsing failed
+          throw new Error("PublishedAt is not a valid date string.");
+        }
+      }
+      return publishedAt;
+    };
+    const validateCategory = (category: TechnologyCategory) => {
+      if (
+        !["techniques", "platforms", "tools", "languages"].includes(category)
+      ) {
+        throw new Error("Technology must have a valid category.");
+      }
+      return category;
+    };
+    const validateMaturity = (maturity?: TechnologyMaturity) => {
+      if (published && !maturity) {
+        throw new Error("Technology must have a valid maturity.");
+      }
+      if (
+        maturity &&
+        !["assess", "trial", "adopt", "hold"].includes(maturity)
+      ) {
+        throw new Error("Technology must have a valid maturity.");
+      }
+      return maturity;
+    };
+    const validateDescription = (description: string) => {
+      if (!description) {
+        throw new Error("Technology must have a description.");
+      }
+      description = sanitizeText(description);
+      if (description.length < 1) {
+        throw new Error("Description contains no usable text.");
+      }
+      return description;
+    };
+    const validateMaturityDescription = (maturityDescription?: string) => {
+      if (published && !maturityDescription) {
+        throw new Error("Technology must have a classification description.");
+      }
+      if (maturityDescription) {
+        maturityDescription = sanitizeText(maturityDescription);
+        if (maturityDescription.length < 1) {
+          throw new Error(
+            "Classification description contains no usable text."
+          );
+        }
+      }
+      return maturityDescription;
+    };
+    const validateChangedBy = (changedBy?: string) => {
+      if (changedBy && !Id.isValidId(changedBy)) {
+        throw new Error("Technology must have a valid changedBy.");
+      }
+      return changedBy;
+    };
+    const validateChangedAt = (changedAt?: string) => {
+      if (changedAt) {
+        try {
+          changedAt = new Date(changedAt).toISOString();
+        } catch (error) {
+          // changedAt parsing failed
+          throw new Error("changedAt is not a valid date string.");
+        }
+      }
+      return changedAt;
+    };
+    const validateName = (name: string) => {
+      if (!name) {
+        throw new Error("Technology must have a name.");
+      }
+      name = sanitizeText(name);
+      if (name.length < 1) {
+        throw new Error("Name contains no usable text.");
+      }
+      return name;
+    };
 
-    name = sanitizeText(name);
-    if (name.length < 1) {
-      throw new Error("Name contains no usable text.");
-    }
-    description = sanitizeText(description);
-    if (description.length < 1) {
-      throw new Error("Description contains no usable text.");
-    }
-    if (maturityDescription) {
-      maturityDescription = sanitizeText(maturityDescription);
-      if (maturityDescription.length < 1) {
-        throw new Error("Classification description contains no usable text.");
-      }
-    }
+    id = validateId(id);
+    teamId = validateTeamId(teamId);
+    published = validatePublished(published);
+    publishedAt = validatePublishedAt(publishedAt);
+    category = validateCategory(category);
+    maturity = validateMaturity(maturity);
+    description = validateDescription(description);
+    maturityDescription = validateMaturityDescription(maturityDescription);
+    changedBy = validateChangedBy(changedBy);
+    changedAt = validateChangedAt(changedAt);
+    name = validateName(name);
 
     return Object.freeze({
       getId: () => id,
@@ -109,6 +183,8 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
       getName: () => name,
       getDescription: () => description,
       getMaturityDescription: () => maturityDescription,
+      getChangedAt: () => changedAt,
+      getChangedBy: () => changedBy,
       getTechnologyData: () => ({
         id,
         category,
@@ -119,6 +195,8 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
         name,
         description,
         maturityDescription,
+        changedAt,
+        changedBy,
       }),
       publish: () => {
         if (published) {
@@ -135,6 +213,27 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
 
         published = true;
         publishedAt = new Date().toISOString();
+      },
+      setName: (newName: string) => {
+        name = validateName(newName);
+      },
+      setDescription: (newDescription: string) => {
+        description = validateDescription(newDescription);
+      },
+      setMaturityDescription: (newMaturityDescription: string) => {
+        maturityDescription = validateMaturityDescription(
+          newMaturityDescription
+        );
+      },
+      setCategory: (newCategory: TechnologyCategory) => {
+        category = validateCategory(newCategory);
+      },
+      setMaturity: (newMaturity: TechnologyMaturity) => {
+        maturity = validateMaturity(newMaturity);
+      },
+      hasChanged: (byAccountId: string) => {
+        changedBy = validateChangedBy(byAccountId);
+        changedAt = new Date().toISOString();
       },
     });
   };

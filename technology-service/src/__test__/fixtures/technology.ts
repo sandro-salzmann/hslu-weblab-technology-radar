@@ -18,6 +18,8 @@ export function makeFakeTechnologyData(overrides = {}): TechnologyData {
     teamId: Id.makeId(),
     published: faker.random.arrayElement([true, false]),
     publishedAt: new Date(faker.time.recent()).toISOString(),
+    changedBy: Id.makeId(),
+    changedAt: new Date(faker.time.recent()).toISOString(),
   };
 
   return {

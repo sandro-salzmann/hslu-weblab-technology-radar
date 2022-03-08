@@ -22,7 +22,9 @@ export interface TechnologyData {
   name: string;
   description: string;
   published: boolean;
-  
+
+  changedBy?: string;
+  changedAt?: string;
   publishedAt?: string;
   maturity?: TechnologyMaturity;
   maturityDescription?: string;
