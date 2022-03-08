@@ -160,7 +160,7 @@ describe("technology db", () => {
         teamId: technology.getTeamId(),
       })
     );
-    await technologyDb.update(patchedTechnology);
+    await technologyDb.update(patchedTechnology, Id.makeId());
 
     const found = await technologyDb.findById({
       id: technology.getId(),
@@ -184,7 +184,7 @@ describe("technology db", () => {
         maturity: undefined,
       })
     );
-    await technologyDb.update(patchedTechnology);
+    await technologyDb.update(patchedTechnology, Id.makeId());
 
     const found = await technologyDb.findById({
       id: technology.getId(),
@@ -197,6 +197,84 @@ describe("technology db", () => {
       maturity: technology.getMaturity(),
     };
     expect(foundData).toEqual(shouldData);
+  });
+  it("saves and gets history events", async () => {
+    const technology = makeTechnology(makeFakeTechnologyData());
+    await technologyDb.addTechnology(technology, Id.makeId());
+
+    const patchedTechnology = makeTechnology(
+      makeFakeTechnologyData({
+        id: technology.getId(),
+        teamId: technology.getTeamId(),
+        published: false,
+        name: "name",
+      })
+    );
+    patchedTechnology.publish();
+    const createdEvent = { type: "published" };
+
+    const changedBy = Id.makeId();
+    await technologyDb.update(patchedTechnology, changedBy);
+    const historyEvents = await technologyDb.getHistoryEvents({
+      teamId: technology.getTeamId(),
+      technologyId: technology.getId(),
+    });
+    expect(historyEvents[0]).toBeDefined();
+    expect(historyEvents[0].changedBy).toEqual(changedBy);
+    expect(historyEvents[0].timestamp).toBeDefined();
+    expect(historyEvents[0].historyEvents).toEqual([createdEvent]);
+
+    patchedTechnology.setName("new-name");
+    const createdEvent2 = {
+      type: "nameChanged",
+      prevValue: "name",
+      newValue: "new-name",
+    };
+    await technologyDb.update(patchedTechnology, changedBy);
+    const historyEvents2 = await technologyDb.getHistoryEvents({
+      teamId: technology.getTeamId(),
+      technologyId: technology.getId(),
+    });
+
+    expect(historyEvents2[0]).toBeDefined();
+    expect(historyEvents2[0].changedBy).toEqual(changedBy);
+    expect(historyEvents2[0].timestamp).toBeDefined();
+    expect(historyEvents2[0].historyEvents).toEqual([createdEvent]);
+    expect(historyEvents2[1]).toBeDefined();
+    expect(historyEvents2[1].changedBy).toEqual(changedBy);
+    expect(historyEvents2[1].timestamp).toBeDefined();
+    expect(historyEvents2[1].historyEvents).toEqual([
+      createdEvent,
+      createdEvent2,
+    ]);
+  });
+
+  it("doesn't get history events from another teams technology", async () => {
+    const otherTeamId = Id.makeId();
+    const technology = makeTechnology(makeFakeTechnologyData());
+    await technologyDb.addTechnology(technology, otherTeamId);
+
+    const patchedTechnology = makeTechnology(
+      makeFakeTechnologyData({
+        id: technology.getId(),
+        teamId: technology.getTeamId(),
+        published: false,
+      })
+    );
+    patchedTechnology.publish();
+    patchedTechnology.setName("new-name");
+    await technologyDb.update(patchedTechnology, technology.getTeamId());
+
+    const noHistoryEvents = await technologyDb.getHistoryEvents({
+      teamId: Id.makeId(),
+      technologyId: technology.getId(),
+    });
+    expect(noHistoryEvents).toEqual([]);
+    const historyEvents = await technologyDb.getHistoryEvents({
+      teamId: technology.getTeamId(),
+      technologyId: technology.getId(),
+    });
+    expect(historyEvents).toHaveLength(2);
   });
 
   it("doesnt throw internal errors (previewAll)", () => {
@@ -230,7 +308,18 @@ describe("technology db", () => {
     // @ts-ignore to test internal db errors
     const technologyDb = makeTechnologyDb({ makeDb: () => null });
     expect(
-      technologyDb.update(makeTechnology(makeFakeTechnologyData()))
+      technologyDb.update(makeTechnology(makeFakeTechnologyData()), Id.makeId())
     ).rejects.toThrow("Failed to update technology.");
+  });
+
+  it("doesnt throw internal errors (getHistoryEvents)", () => {
+    // @ts-ignore to test internal db errors
+    const technologyDb = makeTechnologyDb({ makeDb: () => null });
+    expect(
+      technologyDb.getHistoryEvents({
+        teamId: Id.makeId(),
+        technologyId: Id.makeId(),
+      })
+    ).rejects.toThrow("Failed to find history.");
   });
 });

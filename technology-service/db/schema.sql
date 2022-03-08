@@ -1,6 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 DROP TABLE technology CASCADE;
+DROP TABLE history CASCADE;
 
 DROP TYPE category;
 DROP TYPE maturity;
@@ -24,3 +25,21 @@ CREATE TABLE technology (
     changed_by uuid,
     changed_at TIMESTAMP
 );
+
+CREATE TABLE history (
+    technology_id uuid NOT NULL,
+    team_id uuid NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    changed_by uuid,
+    history_events json
+);
+
+ALTER TABLE history
+ADD CONSTRAINT technology_id_fkey
+FOREIGN KEY (technology_id)
+REFERENCES technology(id)
+ON DELETE CASCADE;
+
+-- index history.technology_id to make search faster
+CREATE INDEX history_technology_id_index
+ON history (technology_id);

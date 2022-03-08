@@ -1,5 +1,5 @@
 import faker from "@faker-js/faker";
-import { TechnologyData } from "common";
+import { HistoryEvent, TechnologyData } from "common";
 import { Id } from "./id";
 
 export function makeFakeTechnologyData(overrides = {}): TechnologyData {
@@ -27,3 +27,16 @@ export function makeFakeTechnologyData(overrides = {}): TechnologyData {
     ...overrides,
   };
 }
+
+export const makeFakeHistoryEvent = (): HistoryEvent => ({
+  type: faker.random.arrayElement([
+    "published",
+    "nameChanged",
+    "descriptionChanged",
+    "categoryChanged",
+    "maturityChanged",
+    "maturityDescriptionChanged",
+  ]),
+  newValue: faker.lorem.word(),
+  prevValue: faker.lorem.word(),
+});

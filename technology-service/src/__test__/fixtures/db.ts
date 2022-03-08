@@ -1,4 +1,4 @@
-import { TechnologyData } from "common";
+import { HistoryEvent, TechnologyData } from "common";
 import { DataType, newDb } from "pg-mem";
 import { v4 as uuidv4 } from "uuid";
 
@@ -47,7 +47,26 @@ CREATE TABLE technology (
   published_at TIMESTAMP,
   changed_by uuid,
   changed_at TIMESTAMP
-);`);
+);
+
+CREATE TABLE history (
+  technology_id uuid NOT NULL,
+  team_id uuid NOT NULL,
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  changed_by uuid,
+  history_events json
+);
+
+ALTER TABLE history
+ADD CONSTRAINT technology_id_fkey
+FOREIGN KEY (technology_id)
+REFERENCES technology(id)
+ON DELETE CASCADE;
+
+-- index history.technology_id to make search faster
+CREATE INDEX history_technology_id_index
+ON history (technology_id);
+`);
 
 // make a database snapshot to restore from it later
 const backup = db.backup();
@@ -88,5 +107,23 @@ export async function insertTechnology({
       changedBy,
       changedAt,
     ]
+  );
+}
+
+export async function insertTechnologyHistory({
+  technologyId,
+  teamId,
+  historyEvents,
+  changedBy,
+}: {
+  technologyId: string;
+  teamId: string;
+  historyEvents: HistoryEvent[];
+  changedBy: string;
+}) {
+  await pool.query(
+    `INSERT INTO history(technology_id, team_id, history_events, changed_by)
+    VALUES($1,$2,$3,$4)`,
+    [technologyId, teamId, JSON.stringify(historyEvents), changedBy]
   );
 }

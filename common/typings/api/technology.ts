@@ -18,3 +18,23 @@ export interface PatchTechnologyBody {
   maturityDescription?: string;
   published?: boolean;
 }
+
+export type HistoryEventType =
+  | "published"
+  | "nameChanged"
+  | "descriptionChanged"
+  | "categoryChanged"
+  | "maturityChanged"
+  | "maturityDescriptionChanged";
+
+export interface HistoryEvent {
+  type: HistoryEventType;
+  prevValue?: any;
+  newValue?: any;
+}
+
+export type TechnologyHistoryData = {
+  timestamp: string;
+  changedBy: string;
+  historyEvents: HistoryEvent[];
+}[];

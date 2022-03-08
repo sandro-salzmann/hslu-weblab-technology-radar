@@ -30,12 +30,27 @@ export const PlaceholderTableCell = () => {
     </Table.Cell>
   );
 };
+
 export const PlaceholderHeaderWithTwoLines = () => {
   return (
     <Placeholder>
       <Placeholder.Header>
         <Placeholder.Line />
       </Placeholder.Header>
+      <Placeholder.Line />
+      <Placeholder.Line />
+    </Placeholder>
+  );
+};
+
+export const PlaceholderFluidHeaderWithTwoLines = () => {
+  return (
+    <Placeholder fluid>
+      <Placeholder.Header>
+        <Placeholder.Line />
+      </Placeholder.Header>
+      <Placeholder.Line />
+      <Placeholder.Line />
       <Placeholder.Line />
       <Placeholder.Line />
     </Placeholder>

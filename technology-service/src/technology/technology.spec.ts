@@ -240,6 +240,9 @@ describe("technology", () => {
     publishedTechnology.publish();
     expect(publishedTechnology.getPublished()).toEqual(true);
     expect(publishedTechnology.getPublishedAt()).toBeDefined();
+    expect(publishedTechnology.getNewHistoryEvents()).toEqual([
+      { type: "published" },
+    ]);
   });
   it("can convert changedAt date strings to ISOString", () => {
     const changedAtValid = makeFakeTechnologyData({
@@ -264,6 +267,7 @@ describe("technology", () => {
   it("can set a valid name", () => {
     const technologyFakeData = makeFakeTechnologyData({
       published: true,
+      name: "prev-name",
     });
     const technology = makeTechnology(technologyFakeData);
     expect(() => technology.setName("<svg><g/onload=alert(2)//<p>")).toThrow(
@@ -271,10 +275,14 @@ describe("technology", () => {
     );
     technology.setName("valid");
     expect(technology.getName()).toEqual("valid");
+    expect(technology.getNewHistoryEvents()).toEqual([
+      { newValue: "valid", prevValue: "prev-name", type: "nameChanged" },
+    ]);
   });
   it("can set a valid description", () => {
     const technologyFakeData = makeFakeTechnologyData({
       published: true,
+      description: "prev-description",
     });
     const technology = makeTechnology(technologyFakeData);
     expect(() =>
@@ -282,10 +290,18 @@ describe("technology", () => {
     ).toThrow("Description contains no usable text.");
     technology.setDescription("valid");
     expect(technology.getDescription()).toEqual("valid");
+    expect(technology.getNewHistoryEvents()).toEqual([
+      {
+        newValue: "valid",
+        prevValue: "prev-description",
+        type: "descriptionChanged",
+      },
+    ]);
   });
   it("can set a valid maturity description", () => {
     const technologyFakeData = makeFakeTechnologyData({
       published: true,
+      maturityDescription: "old-maturity-description",
     });
     const technology = makeTechnology(technologyFakeData);
     expect(() =>
@@ -293,10 +309,18 @@ describe("technology", () => {
     ).toThrow("Classification description contains no usable text.");
     technology.setMaturityDescription("valid");
     expect(technology.getMaturityDescription()).toEqual("valid");
+    expect(technology.getNewHistoryEvents()).toEqual([
+      {
+        newValue: "valid",
+        prevValue: "old-maturity-description",
+        type: "maturityDescriptionChanged",
+      },
+    ]);
   });
   it("can set a valid maturity", () => {
     const technologyFakeData = makeFakeTechnologyData({
       published: true,
+      maturity: "assess",
     });
     const technology = makeTechnology(technologyFakeData);
     // @ts-ignore to test invalid values
@@ -305,10 +329,14 @@ describe("technology", () => {
     );
     technology.setMaturity("assess");
     expect(technology.getMaturity()).toEqual("assess");
+    expect(technology.getNewHistoryEvents()).toEqual([
+      { newValue: "assess", prevValue: "assess", type: "maturityChanged" },
+    ]);
   });
   it("can set a valid category", () => {
     const technologyFakeData = makeFakeTechnologyData({
       published: true,
+      category: "tools",
     });
     const technology = makeTechnology(technologyFakeData);
     // @ts-ignore to test invalid values
@@ -317,6 +345,9 @@ describe("technology", () => {
     );
     technology.setCategory("techniques");
     expect(technology.getCategory()).toEqual("techniques");
+    expect(technology.getNewHistoryEvents()).toEqual([
+      { newValue: "techniques", prevValue: "tools", type: "categoryChanged" },
+    ]);
   });
   it("can set changed information", () => {
     const technologyFakeData = makeFakeTechnologyData({
@@ -331,5 +362,23 @@ describe("technology", () => {
     technology.hasChanged(id);
     expect(technology.getChangedBy()).toEqual(id);
     expect(technology.getChangedAt()).toBeDefined();
+    expect(technology.getNewHistoryEvents()).toEqual([]);
+  });
+  it("can register multiple history events", () => {
+    const technologyFakeData = makeFakeTechnologyData({
+      published: false,
+      name: "prev-name",
+      maturity: "hold",
+    });
+    const technology = makeTechnology(technologyFakeData);
+    // @ts-ignore to test invalid values
+    technology.publish();
+    technology.setName("new-name");
+    technology.setMaturity("assess");
+    expect(technology.getNewHistoryEvents()).toEqual([
+      { type: "published" },
+      { newValue: "new-name", prevValue: "prev-name", type: "nameChanged" },
+      { newValue: "assess", prevValue: "hold", type: "maturityChanged" },
+    ]);
   });
 });
