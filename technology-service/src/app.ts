@@ -5,6 +5,7 @@ import { ENV } from "./config/config";
 import {
   getTechnologiesPreview,
   getTechnology,
+  patchTechnology,
   postTechnology,
 } from "./controllers";
 import { notFound } from "./controllers/not-found";
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 app.get("/preview", makeExpressCallback(getTechnologiesPreview));
 app.get("/:id", makeExpressCallback(getTechnology));
 app.post("/", makeExpressCallback(postTechnology));
+app.patch("/", makeExpressCallback(patchTechnology));
 app.use(makeExpressCallback(notFound));
 
 app.listen(ENV.port, () => {

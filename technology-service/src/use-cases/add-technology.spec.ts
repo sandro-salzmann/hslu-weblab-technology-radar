@@ -26,14 +26,20 @@ describe("add technology", () => {
     expect(
       addTechnology(
         makeFakeTechnologyData({ category: "invalid" }),
-        Id.makeId()
+        Id.makeId(),
+        "LEADER"
       )
     ).rejects.toThrow("Technology must have a valid category.");
   });
   it("requires a valid accountId", () => {
-    expect(addTechnology(makeFakeTechnologyData(), "invalid")).rejects.toThrow(
-      "You must supply a accountId"
-    );
+    expect(
+      addTechnology(makeFakeTechnologyData(), "invalid", "LEADER")
+    ).rejects.toThrow("You must supply a accountId");
+  });
+  it("requires a leader role", () => {
+    expect(
+      addTechnology(makeFakeTechnologyData(), Id.makeId(), "MEMBER")
+    ).rejects.toThrow("You don't have permissions to create technologies.");
   });
   it("can add a technology", async () => {
     const technologyDb = makeTechnologyDb({ makeDb });
@@ -42,15 +48,22 @@ describe("add technology", () => {
     const teamId = Id.makeId();
     const technology1 = makeFakeTechnologyData({ teamId });
     const technology2 = makeFakeTechnologyData({ teamId });
-    expect(addTechnology(technology1, Id.makeId())).resolves.not.toThrow();
+    expect(
+      addTechnology(technology1, Id.makeId(), "LEADER")
+    ).resolves.not.toThrow();
     expect(
       addTechnology(
         makeFakeTechnologyData({ teamId: Id.makeId() }),
-        Id.makeId()
+        Id.makeId(),
+        "LEADER"
       )
     ).resolves.not.toThrow();
-    expect(addTechnology(technology2, Id.makeId())).resolves.not.toThrow();
-    expect(previewTechnologies({ teamId })).resolves.toEqual([
+    expect(
+      addTechnology(technology2, Id.makeId(), "LEADER")
+    ).resolves.not.toThrow();
+    expect(
+      previewTechnologies({ teamId, teamRole: "LEADER" })
+    ).resolves.toEqual([
       makeTechnologyPreviewOf(technology1),
       makeTechnologyPreviewOf(technology2),
     ]);
@@ -63,7 +76,8 @@ describe("add technology", () => {
     expect(
       addTechnology(
         makeFakeTechnologyData({ teamId, id: existingTechnology.id }),
-        Id.makeId()
+        Id.makeId(),
+        "LEADER"
       )
     ).rejects.toThrow("Failed to add technologies.");
   });

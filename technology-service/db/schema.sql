@@ -18,5 +18,7 @@ CREATE TABLE technology (
     description varchar,
     maturity_description varchar,
     created_by uuid,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    published boolean DEFAULT false,
+    published_at TIMESTAMP
 );

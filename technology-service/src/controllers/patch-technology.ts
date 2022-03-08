@@ -1,20 +1,22 @@
-import { PostTechnologyBody } from "common";
+import { PatchTechnologyBody } from "common";
 import Joi from "joi";
 import { ControllerFn } from "../express-callback";
-import { AddTechnologyFn } from "../use-cases/add-technology";
+import { EditTechnologyFn } from "../use-cases/edit-technology";
 
-export const makePostTechnology =
-  ({ addTechnology }: { addTechnology: AddTechnologyFn }): ControllerFn =>
+export const makePatchTechnology =
+  ({ editTechnology }: { editTechnology: EditTechnologyFn }): ControllerFn =>
   async (httpRequest, authorization) => {
     const headers = { "Content-Type": "application/json" };
 
     try {
-      const validator = Joi.object<PostTechnologyBody>().keys({
-        name: Joi.string().required(),
-        category: Joi.string().required(),
-        description: Joi.string().required(),
+      const validator = Joi.object<PatchTechnologyBody>().keys({
+        id: Joi.string().uuid({ version: "uuidv4" }).required(),
+        name: Joi.string().optional(),
+        category: Joi.string().optional(),
+        description: Joi.string().optional(),
         maturity: Joi.string().optional(),
         maturityDescription: Joi.string().optional(),
+        published: Joi.boolean().optional(),
       });
 
       const { value: validatedBody, error } = validator.validate(
@@ -24,7 +26,7 @@ export const makePostTechnology =
       if (error) throw new Error(`Config validation error: ${error.message}`);
       if (!validatedBody) throw new Error("Validation failed.");
 
-      const { id } = await addTechnology(
+      const updatedTechnology = await editTechnology(
         {
           teamId: authorization.teamId,
           ...validatedBody,
@@ -34,8 +36,8 @@ export const makePostTechnology =
       );
       return {
         headers,
-        statusCode: 201,
-        body: { id },
+        statusCode: 200,
+        body: updatedTechnology.getTechnologyData(),
       };
     } catch (e: any) {
       // TODO: error handling

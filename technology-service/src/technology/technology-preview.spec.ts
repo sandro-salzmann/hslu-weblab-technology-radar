@@ -36,6 +36,22 @@ describe("technology-preview", () => {
       "Technology preview must have a valid maturity."
     );
   });
+  it("must have a valid published status", () => {
+    const nullStatus = makeFakeTechnologyPreviewData({ published: null });
+    expect(() => makeTechnologyPreview(nullStatus)).toThrow(
+      "Technology preview must have a valid published status."
+    );
+    const invalidStatus = makeFakeTechnologyPreviewData({ published: "invalid" });
+    expect(() => makeTechnologyPreview(invalidStatus)).toThrow(
+      "Technology preview must have a valid published status."
+    );
+  });
+  it("can have a valid published status", () => {
+    const notPublished = makeFakeTechnologyPreviewData({ published: false });
+    expect(() => makeTechnologyPreview(notPublished)).not.toThrow();
+    const technology = makeTechnologyPreview(notPublished);
+    expect(technology.getPublished()).toBe(false);
+  });
   it("can have a category", () => {
     const platformsCategory = makeFakeTechnologyPreviewData({
       category: "platforms",

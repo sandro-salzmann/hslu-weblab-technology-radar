@@ -3,6 +3,8 @@ import { IdUtils } from "../Id";
 
 export interface Technology {
   getTeamId: () => string;
+  getPublished: () => boolean;
+  getPublishedAt: () => string | undefined;
   getId: () => string;
   getCategory: () => TechnologyCategory;
   getMaturity: () => TechnologyMaturity | undefined;
@@ -10,6 +12,7 @@ export interface Technology {
   getDescription: () => string;
   getMaturityDescription: () => string | undefined;
   getTechnologyData: () => TechnologyData;
+  publish: () => void;
 }
 
 interface BuildMakeTechnologyFnProps {
@@ -19,6 +22,8 @@ interface BuildMakeTechnologyFnProps {
 export interface MakeTechnologyFnProps {
   teamId: string;
   id?: string;
+  published?: boolean;
+  publishedAt?: string;
   category: TechnologyCategory;
   maturity?: TechnologyMaturity;
   name: string;
@@ -35,6 +40,8 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
   ({
     id = Id.makeId(),
     teamId,
+    published = false,
+    publishedAt,
     category,
     maturity,
     name,
@@ -50,8 +57,14 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     if (!["techniques", "platforms", "tools", "languages"].includes(category)) {
       throw new Error("Technology must have a valid category.");
     }
-    if (maturity && !["assess", "trial", "adopt", "hold"].includes(maturity)) {
+    if (
+      (maturity && !["assess", "trial", "adopt", "hold"].includes(maturity)) ||
+      (published && !maturity)
+    ) {
       throw new Error("Technology must have a valid maturity.");
+    }
+    if (![true, false].includes(published)) {
+      throw new Error("Technology must have a valid published status.");
     }
     if (!name) {
       throw new Error("Technology must have a name.");
@@ -59,23 +72,31 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     if (!description) {
       throw new Error("Technology must have a description.");
     }
-    if (!maturityDescription) {
+    if (published && !maturityDescription) {
       throw new Error("Technology must have a classification description.");
     }
+    if (publishedAt) {
+      try {
+        publishedAt = new Date(publishedAt).toISOString();
+      } catch (error) {
+        // publishedAt parsing failed
+        throw new Error("PublishedAt is not a valid date string.");
+      }
+    }
 
-    const sanitizedName = sanitizeText(name);
-    if (sanitizedName.length < 1) {
+    name = sanitizeText(name);
+    if (name.length < 1) {
       throw new Error("Name contains no usable text.");
     }
-    const sanitizedDescription = sanitizeText(description);
-    if (sanitizedDescription.length < 1) {
+    description = sanitizeText(description);
+    if (description.length < 1) {
       throw new Error("Description contains no usable text.");
     }
-    const sanitizedMaturityDescription = sanitizeText(
-      maturityDescription
-    );
-    if (sanitizedMaturityDescription.length < 1) {
-      throw new Error("Classification description contains no usable text.");
+    if (maturityDescription) {
+      maturityDescription = sanitizeText(maturityDescription);
+      if (maturityDescription.length < 1) {
+        throw new Error("Classification description contains no usable text.");
+      }
     }
 
     return Object.freeze({
@@ -83,17 +104,37 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
       getTeamId: () => teamId,
       getCategory: () => category,
       getMaturity: () => maturity,
-      getName: () => sanitizedName,
-      getDescription: () => sanitizedDescription,
-      getMaturityDescription: () => sanitizedMaturityDescription,
+      getPublished: () => published,
+      getPublishedAt: () => publishedAt,
+      getName: () => name,
+      getDescription: () => description,
+      getMaturityDescription: () => maturityDescription,
       getTechnologyData: () => ({
         id,
         category,
         maturity,
         teamId,
-        name: sanitizedName,
-        description: sanitizedDescription,
-        maturityDescription: sanitizedMaturityDescription,
+        published,
+        publishedAt,
+        name,
+        description,
+        maturityDescription,
       }),
+      publish: () => {
+        if (published) {
+          throw new Error("Technology is already published");
+        }
+        if (!maturity) {
+          throw new Error("Maturity needs to be set before publishing");
+        }
+        if (!maturityDescription) {
+          throw new Error(
+            "Maturity description needs to be set before publishing"
+          );
+        }
+
+        published = true;
+        publishedAt = new Date().toISOString();
+      },
     });
   };

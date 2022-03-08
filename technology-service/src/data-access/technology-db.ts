@@ -16,6 +16,7 @@ export interface TechnologyDb {
     category?: TechnologyCategory;
   }) => Promise<TechnologyPreview[]>;
   addTechnology: (technology: Technology, accountId: string) => void;
+  update: (technology: Technology) => void;
 }
 
 export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
@@ -31,8 +32,10 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
         name: string;
         description: string;
         maturity_description: string;
+        published: boolean;
+        published_at: string;
       }>(
-        "SELECT id, team_id, category, maturity, name, description, maturity_description FROM technology WHERE team_id = $1 AND id = $2",
+        "SELECT id, team_id, category, maturity, name, description, maturity_description, published, published_at FROM technology WHERE team_id = $1 AND id = $2",
         [teamId, id]
       );
       const technologyResult = result.rows[0];
@@ -45,6 +48,8 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
         name: technologyResult.name,
         description: technologyResult.description,
         maturityDescription: technologyResult.maturity_description,
+        published: technologyResult.published,
+        publishedAt: technologyResult.published_at,
       });
     } catch (error) {
       console.log(error);
@@ -61,16 +66,17 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
         maturity: TechnologyMaturity;
         name: string;
         description_preview: string;
+        published: boolean;
       };
       let result;
       if (category) {
         result = await db.query<DbResultSet>(
-          "SELECT id, category, maturity, name, substring(description from 0 for 50) AS description_preview FROM technology WHERE team_id = $1 AND category = $2::category",
+          "SELECT id, category, maturity, name, substring(description from 0 for 50) AS description_preview, published FROM technology WHERE team_id = $1 AND category = $2::category",
           [teamId, category]
         );
       } else {
         result = await db.query<DbResultSet>(
-          "SELECT id, category, maturity, name, substring(description from 0 for 50) AS description_preview FROM technology WHERE team_id = $1",
+          "SELECT id, category, maturity, name, substring(description from 0 for 50) AS description_preview, published FROM technology WHERE team_id = $1",
           [teamId]
         );
       }
@@ -84,6 +90,7 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
           maturity: technologyResult.maturity,
           name: technologyResult.name,
           descriptionPreview: technologyResult.description_preview,
+          published: technologyResult.published,
         })
       );
 
@@ -114,6 +121,38 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
     } catch (error) {
       console.log(error);
       throw new Error("Failed to add technologies.");
+    }
+  },
+  update: async (technology) => {
+    try {
+      const db = await makeDb();
+
+      await db.query(
+        `UPDATE technology SET
+          category = COALESCE($2, category),
+          maturity = COALESCE($3, maturity),
+          name = COALESCE($4, name),
+          description = COALESCE($5, description),
+          maturity_description = COALESCE($6, maturity_description),
+          published = COALESCE($7, published),
+          published_at = COALESCE($8, published_at)
+        WHERE id = $1
+        AND team_id = $9`,
+        [
+          technology.getId(),
+          technology.getCategory(),
+          technology.getMaturity(),
+          technology.getName(),
+          technology.getDescription(),
+          technology.getMaturityDescription(),
+          technology.getPublished(),
+          technology.getPublishedAt(),
+          technology.getTeamId()
+        ]
+      );
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to update technology.");
     }
   },
 });

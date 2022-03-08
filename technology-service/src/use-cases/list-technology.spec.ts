@@ -22,13 +22,34 @@ describe("list technology", () => {
 
   it("requires a technology id", () => {
     expect(
-      listTechnology({ technologyId: "", teamId: Id.makeId() })
+      listTechnology({
+        technologyId: "",
+        teamId: Id.makeId(),
+        teamRole: "LEADER",
+      })
     ).rejects.toThrow("You must supply a technology id.");
   });
   it("requires a team id", () => {
     expect(
-      listTechnology({ technologyId: Id.makeId(), teamId: "" })
+      listTechnology({
+        technologyId: Id.makeId(),
+        teamId: "",
+        teamRole: "LEADER",
+      })
     ).rejects.toThrow("You must supply a team id.");
+  });
+  it("doesn't allow accounts with a member role to view unpublished technologies", async () => {
+    const unpublishedTechnology = makeFakeTechnologyData({ published: false });
+    await insertTechnology(unpublishedTechnology);
+    expect(
+      listTechnology({
+        technologyId: unpublishedTechnology.id,
+        teamId: unpublishedTechnology.teamId,
+        teamRole: "MEMBER",
+      })
+    ).rejects.toThrow(
+      "You don't have permissions to view unpublished technologies."
+    );
   });
   it("gets a technology by id", async () => {
     const teamId = Id.makeId();
@@ -41,7 +62,11 @@ describe("list technology", () => {
     await insertTechnology(thirdTechnology);
 
     expect(
-      listTechnology({ teamId, technologyId: secondTechnology.id })
+      listTechnology({
+        teamId,
+        technologyId: secondTechnology.id,
+        teamRole: "LEADER",
+      })
     ).resolves.toEqual(secondTechnology);
   });
 });

@@ -9,19 +9,14 @@ import {
 } from "semantic-ui-react";
 import { useAddTechnology } from "../api/useMutations";
 import { useMessageQueue } from "../hooks/useMessageQueue";
+import { MaturityDescriptionInput } from "./technology-form/MaturityDescriptionInput";
+import { MaturitySelection } from "./technology-form/MaturitySelection";
 
 const categoryOptions = [
   { key: "techniques", text: "Techniques", value: "techniques" },
   { key: "platforms", text: "Platforms", value: "platforms" },
   { key: "tools", text: "Tools", value: "tools" },
   { key: "languages", text: "Languages", value: "languages" },
-];
-
-const maturityOptions = [
-  { key: "assess", text: "Assess", value: "assess" },
-  { key: "trial", text: "Trial", value: "trial" },
-  { key: "adopt", text: "Adopt", value: "adopt" },
-  { key: "hold", text: "Hold", value: "hold" },
 ];
 
 const defaultValues: PostTechnologyBody = {
@@ -87,31 +82,19 @@ export const AddTechnologyForm = () => {
           onChange={onChangeSelect}
           value={category}
         />
-        <Form.Select
-          fluid
-          label="Ring"
-          options={maturityOptions}
-          placeholder="Ring"
-          clearable
-          name="maturity"
-          onChange={onChangeSelect}
-          value={maturity}
-        />
+        <MaturitySelection onChange={onChangeSelect} value={maturity} />
       </Form.Group>
       <Form.TextArea
         label="Beschreibung Technologie"
         placeholder="Beschreibung was die Technologie macht..."
-        required
         name="description"
+        required
         onChange={onChangeTextarea}
         value={description}
       />
-      <Form.TextArea
-        label="Beschreibung der Einordnung"
-        placeholder="Beschreibung warum die Einordnung gewählt wurde..."
-        name="maturityDescription"
-        onChange={onChangeTextarea}
+      <MaturityDescriptionInput
         value={maturityDescription}
+        onChange={onChangeTextarea}
       />
       <Form.Button primary disabled={isLoading} loading={isLoading}>
         Hinzufügen

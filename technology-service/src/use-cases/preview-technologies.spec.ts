@@ -25,9 +25,9 @@ describe("preview technologies", () => {
   });
 
   it("requires a team id", () => {
-    expect(previewTechnology({ teamId: "" })).rejects.toThrow(
-      "You must supply a team id."
-    );
+    expect(
+      previewTechnology({ teamId: "", teamRole: "LEADER" })
+    ).rejects.toThrow("You must supply a team id.");
   });
 
   it("can have a valid category", () => {
@@ -35,8 +35,13 @@ describe("preview technologies", () => {
       // @ts-ignore: Testing invalid category
       previewTechnology({ teamId: Id.makeId(), category: "invalid" })
     ).rejects.toThrow("Technology must have a valid category.");
-    expect(previewTechnology({ teamId: Id.makeId(), category: "tools" }))
-      .resolves;
+    expect(
+      previewTechnology({
+        teamId: Id.makeId(),
+        category: "tools",
+        teamRole: "LEADER",
+      })
+    ).resolves;
   });
 
   const insertExampleTechnologies = async () => {
@@ -44,14 +49,17 @@ describe("preview technologies", () => {
     const firstTechnology = makeFakeTechnologyData({
       category: "tools",
       teamId,
+      published: true,
     });
     const secondTechnology = makeFakeTechnologyData({
       category: "platforms",
       teamId,
+      published: false,
     });
     const thirdTechnology = makeFakeTechnologyData({
       category: "tools",
       teamId,
+      published: true,
     });
     const firstTechnologyPreview = makeTechnologyPreviewOf(firstTechnology);
     const secondTechnologyPreview = makeTechnologyPreviewOf(secondTechnology);
@@ -79,9 +87,19 @@ describe("preview technologies", () => {
       thirdTechnologyPreview,
     } = await insertExampleTechnologies();
 
-    expect(previewTechnology({ teamId })).resolves.toEqual([
+    expect(previewTechnology({ teamId, teamRole: "LEADER" })).resolves.toEqual([
       firstTechnologyPreview,
       secondTechnologyPreview,
+      thirdTechnologyPreview,
+    ]);
+  });
+
+  it("filter out unpublished technologies for member accounts", async () => {
+    const { teamId, firstTechnologyPreview, thirdTechnologyPreview } =
+      await insertExampleTechnologies();
+
+    expect(previewTechnology({ teamId, teamRole: "MEMBER" })).resolves.toEqual([
+      firstTechnologyPreview,
       thirdTechnologyPreview,
     ]);
   });
@@ -90,9 +108,8 @@ describe("preview technologies", () => {
     const { teamId, firstTechnologyPreview, thirdTechnologyPreview } =
       await insertExampleTechnologies();
 
-    expect(previewTechnology({ teamId, category: "tools" })).resolves.toEqual([
-      firstTechnologyPreview,
-      thirdTechnologyPreview,
-    ]);
+    expect(
+      previewTechnology({ teamId, category: "tools", teamRole: "LEADER" })
+    ).resolves.toEqual([firstTechnologyPreview, thirdTechnologyPreview]);
   });
 });

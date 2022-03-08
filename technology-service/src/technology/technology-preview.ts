@@ -9,6 +9,7 @@ export interface TechnologyPreview {
   getId: () => string;
   getCategory: () => TechnologyCategory;
   getMaturity: () => TechnologyMaturity;
+  getPublished: () => boolean;
   getName: () => string;
   getDescriptionPreview: () => string;
   getTechnologyPreviewData: () => TechnologyPreviewData;
@@ -22,6 +23,7 @@ export interface MakeTechnologyPreviewFnProps {
   id: string;
   category: TechnologyCategory;
   maturity: TechnologyMaturity;
+  published?: boolean;
   name: string;
   descriptionPreview: string;
 }
@@ -34,7 +36,7 @@ type MakeTechnologyFn = (
 
 export const buildMakeTechnologyPreview: BuildMakeTechnologyPreviewFn =
   ({ Id, sanitizeText }) =>
-  ({ id, category, maturity, name, descriptionPreview }) => {
+  ({ id, category, maturity, name, descriptionPreview, published = false }) => {
     if (!id || !Id.isValidId(id)) {
       throw new Error("Technology preview must have a valid id.");
     }
@@ -43,6 +45,9 @@ export const buildMakeTechnologyPreview: BuildMakeTechnologyPreviewFn =
     }
     if (!["assess", "trial", "adopt", "hold"].includes(maturity)) {
       throw new Error("Technology preview must have a valid maturity.");
+    }
+    if (![true, false].includes(published)) {
+      throw new Error("Technology preview must have a valid published status.");
     }
     if (!name) {
       throw new Error("Technology preview must have a name.");
@@ -65,11 +70,13 @@ export const buildMakeTechnologyPreview: BuildMakeTechnologyPreviewFn =
       getCategory: () => category,
       getMaturity: () => maturity,
       getName: () => sanitizedName,
+      getPublished: () => published,
       getDescriptionPreview: () => sanitizedDescriptionPreview,
       getTechnologyPreviewData: () => ({
         id,
         category,
         maturity,
+        published,
         name: sanitizedName,
         descriptionPreview: sanitizedDescriptionPreview,
       }),
