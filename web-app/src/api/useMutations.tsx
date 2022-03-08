@@ -74,7 +74,10 @@ export const usePatchTechnology = ({ onSuccess }: UsePatchTechnologyProps) => {
         alert(`Failed to publish category! (${error})`);
       },
       onSuccess: async (data, postTechnologyBody, context) => {
-        await queryClient.refetchQueries(["technology-previews"]);
+        await queryClient.refetchQueries([
+          "technology-previews",
+          postTechnologyBody.id,
+        ]);
         // TODO: use setQueryData instead of refetchQueries
         onSuccess();
       },

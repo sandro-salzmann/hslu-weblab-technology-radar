@@ -17,6 +17,7 @@ import { DescriptionInput } from "./technology-form/DescriptionInput";
 import { MaturityDescriptionInput } from "./technology-form/MaturityDescriptionInput";
 import { MaturitySelection } from "./technology-form/MaturitySelection";
 import { NameInput } from "./technology-form/NameInput";
+import { TechnologyHistory } from "./TechnologyHistory";
 
 type PatchTechnologyBodyKey =
   | "name"
@@ -168,7 +169,7 @@ export const EditTechnologyModal = () => {
       </Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          <Form>
+          <Form style={{ marginBottom: 14 }}>
             <Form.Group widths="equal">
               <NameInput
                 onChange={onChangeInput}
@@ -201,6 +202,7 @@ export const EditTechnologyModal = () => {
               error={errors.maturityDescription}
             />
           </Form>
+          <TechnologyHistory id={activeEditingTechnologyId} />
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>

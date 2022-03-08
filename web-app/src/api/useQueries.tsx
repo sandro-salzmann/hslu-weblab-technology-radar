@@ -2,6 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import {
   TechnologyCategory,
   TechnologyData,
+  TechnologyHistoryData,
   TechnologyPreviewData,
 } from "common";
 import { useQuery } from "react-query";
@@ -36,6 +37,29 @@ export const useTechnologyPreviewsQuery = (category?: TechnologyCategory) => {
     fetchTechnologyPreviews,
     {
       enabled: isAuthenticated,
+    }
+  );
+};
+
+export const useTechnologyHistoryQuery = (
+  id?: string,
+  startQuerying: boolean = true
+) => {
+  const { isAuthenticated } = useAuth0();
+  const { authFetch } = useAuthFetch();
+
+  const fetchTechnologyHistory = async () => {
+    const results = (await authFetch(
+      `/technology/history/${id}`
+    )) as TechnologyHistoryData;
+    return results;
+  };
+
+  return useQuery<TechnologyHistoryData, Error>(
+    ["technology", "history", id],
+    fetchTechnologyHistory,
+    {
+      enabled: isAuthenticated && !!id && startQuerying,
     }
   );
 };

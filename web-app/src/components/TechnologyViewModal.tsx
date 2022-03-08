@@ -8,6 +8,7 @@ import {
   PlaceholderHeaderWithTwoLines,
   PlaceholderThreeLines,
 } from "./Placeholders";
+import { TechnologyHistory } from "./TechnologyHistory";
 
 export const TechnologyViewModal = () => {
   const clearActiveTechnologyId = useStore(
@@ -52,6 +53,7 @@ export const TechnologyViewModal = () => {
               <p>{maturityDescription}</p>
             </Fragment>
           )}
+          <TechnologyHistory id={activeTechnologyId} />
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
