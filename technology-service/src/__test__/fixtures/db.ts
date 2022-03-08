@@ -70,9 +70,11 @@ export async function insertTechnology({
   teamId,
   publishedAt,
   published,
+  changedBy,
+  changedAt,
 }: TechnologyData) {
   await pool.query(
-    "INSERT INTO technology(id, team_id, category, maturity, name, description, maturity_description, published_at, published) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+    "INSERT INTO technology(id, team_id, category, maturity, name, description, maturity_description, published_at, published, changed_by, changed_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
     [
       id,
       teamId,
@@ -83,6 +85,8 @@ export async function insertTechnology({
       maturityDescription,
       publishedAt,
       published,
+      changedBy,
+      changedAt,
     ]
   );
 }

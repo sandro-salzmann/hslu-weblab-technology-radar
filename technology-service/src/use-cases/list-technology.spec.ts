@@ -3,12 +3,12 @@ import { Id } from "../Id";
 import {
   insertTechnology,
   makeDb,
-  restoreBackup,
+  restoreBackup
 } from "../__test__/fixtures/db";
 import { makeFakeTechnologyData } from "../__test__/fixtures/technology";
 import { buildListTechnology, ListTechnologyFn } from "./list-technology";
 
-describe("list technology", () => {
+describe("list technology tests", () => {
   let listTechnology: ListTechnologyFn;
 
   beforeAll(async () => {
@@ -22,7 +22,7 @@ describe("list technology", () => {
 
   it("requires a technology id", () => {
     expect(
-      listTechnology({
+      () => listTechnology({
         technologyId: "",
         teamId: Id.makeId(),
         teamRole: "LEADER",

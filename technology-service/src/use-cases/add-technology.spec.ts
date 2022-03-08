@@ -46,8 +46,8 @@ describe("add technology", () => {
     const previewTechnologies = buildPreviewTechnologies({ technologyDb });
 
     const teamId = Id.makeId();
-    const technology1 = makeFakeTechnologyData({ teamId });
-    const technology2 = makeFakeTechnologyData({ teamId });
+    const technology1 = makeFakeTechnologyData({ teamId, published: false });
+    const technology2 = makeFakeTechnologyData({ teamId, published: false });
     expect(
       addTechnology(technology1, Id.makeId(), "LEADER")
     ).resolves.not.toThrow();
