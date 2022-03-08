@@ -150,6 +150,55 @@ describe("technology db", () => {
     );
   });
 
+  it("updates a technology", async () => {
+    const technology = makeTechnology(makeFakeTechnologyData());
+    await technologyDb.addTechnology(technology, Id.makeId());
+
+    const patchedTechnology = makeTechnology(
+      makeFakeTechnologyData({
+        id: technology.getId(),
+        teamId: technology.getTeamId(),
+      })
+    );
+    await technologyDb.update(patchedTechnology);
+
+    const found = await technologyDb.findById({
+      id: technology.getId(),
+      teamId: technology.getTeamId(),
+    });
+    const foundData = found.getTechnologyData();
+    const shouldData = patchedTechnology.getTechnologyData();
+    expect(foundData).toEqual(shouldData);
+  });
+
+  it("merges missing technology data with existing database data when updating", async () => {
+    const technology = makeTechnology(makeFakeTechnologyData());
+    await technologyDb.addTechnology(technology, Id.makeId());
+
+    const patchedTechnology = makeTechnology(
+      makeFakeTechnologyData({
+        id: technology.getId(),
+        teamId: technology.getTeamId(),
+        published: false,
+        maturityDescription: undefined,
+        maturity: undefined,
+      })
+    );
+    await technologyDb.update(patchedTechnology);
+
+    const found = await technologyDb.findById({
+      id: technology.getId(),
+      teamId: technology.getTeamId(),
+    });
+    const foundData = found.getTechnologyData();
+    const shouldData = {
+      ...patchedTechnology.getTechnologyData(),
+      maturityDescription: technology.getMaturityDescription(),
+      maturity: technology.getMaturity(),
+    };
+    expect(foundData).toEqual(shouldData);
+  });
+
   it("doesnt throw internal errors (previewAll)", () => {
     // @ts-ignore to test internal db errors
     const technologyDb = makeTechnologyDb({ makeDb: () => null });
@@ -175,5 +224,13 @@ describe("technology db", () => {
         Id.makeId()
       )
     ).rejects.toThrow("Failed to add technologies.");
+  });
+
+  it("doesnt throw internal errors (update)", () => {
+    // @ts-ignore to test internal db errors
+    const technologyDb = makeTechnologyDb({ makeDb: () => null });
+    expect(
+      technologyDb.update(makeTechnology(makeFakeTechnologyData()))
+    ).rejects.toThrow("Failed to update technology.");
   });
 });

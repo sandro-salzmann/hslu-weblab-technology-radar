@@ -16,6 +16,7 @@ export interface TechnologyDb {
     category?: TechnologyCategory;
   }) => Promise<TechnologyPreview[]>;
   addTechnology: (technology: Technology, accountId: string) => void;
+  update: (technology: Technology) => void;
 }
 
 export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
@@ -120,6 +121,38 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
     } catch (error) {
       console.log(error);
       throw new Error("Failed to add technologies.");
+    }
+  },
+  update: async (technology) => {
+    try {
+      const db = await makeDb();
+
+      await db.query(
+        `UPDATE technology SET
+          category = COALESCE($2, category),
+          maturity = COALESCE($3, maturity),
+          name = COALESCE($4, name),
+          description = COALESCE($5, description),
+          maturity_description = COALESCE($6, maturity_description),
+          published = COALESCE($7, published),
+          published_at = COALESCE($8, published_at)
+        WHERE id = $1
+        AND team_id = $9`,
+        [
+          technology.getId(),
+          technology.getCategory(),
+          technology.getMaturity(),
+          technology.getName(),
+          technology.getDescription(),
+          technology.getMaturityDescription(),
+          technology.getPublished(),
+          technology.getPublishedAt(),
+          technology.getTeamId()
+        ]
+      );
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to update technology.");
     }
   },
 });

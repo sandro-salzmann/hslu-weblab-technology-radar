@@ -12,6 +12,7 @@ export interface Technology {
   getDescription: () => string;
   getMaturityDescription: () => string | undefined;
   getTechnologyData: () => TechnologyData;
+  publish: () => void;
 }
 
 interface BuildMakeTechnologyFnProps {
@@ -47,7 +48,7 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     description,
     maturityDescription,
   }) => {
-    if (!Id.isValidId(id)) {
+    if (!id || !Id.isValidId(id)) {
       throw new Error("Technology must have a valid id.");
     }
     if (!teamId || !Id.isValidId(teamId)) {
@@ -56,7 +57,10 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     if (!["techniques", "platforms", "tools", "languages"].includes(category)) {
       throw new Error("Technology must have a valid category.");
     }
-    if (maturity && !["assess", "trial", "adopt", "hold"].includes(maturity)) {
+    if (
+      (maturity && !["assess", "trial", "adopt", "hold"].includes(maturity)) ||
+      (published && !maturity)
+    ) {
       throw new Error("Technology must have a valid maturity.");
     }
     if (![true, false].includes(published)) {
@@ -68,21 +72,31 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
     if (!description) {
       throw new Error("Technology must have a description.");
     }
-    if (!maturityDescription) {
+    if (published && !maturityDescription) {
       throw new Error("Technology must have a classification description.");
     }
+    if (publishedAt) {
+      try {
+        publishedAt = new Date(publishedAt).toISOString();
+      } catch (error) {
+        // publishedAt parsing failed
+        throw new Error("PublishedAt is not a valid date string.");
+      }
+    }
 
-    const sanitizedName = sanitizeText(name);
-    if (sanitizedName.length < 1) {
+    name = sanitizeText(name);
+    if (name.length < 1) {
       throw new Error("Name contains no usable text.");
     }
-    const sanitizedDescription = sanitizeText(description);
-    if (sanitizedDescription.length < 1) {
+    description = sanitizeText(description);
+    if (description.length < 1) {
       throw new Error("Description contains no usable text.");
     }
-    const sanitizedMaturityDescription = sanitizeText(maturityDescription);
-    if (sanitizedMaturityDescription.length < 1) {
-      throw new Error("Classification description contains no usable text.");
+    if (maturityDescription) {
+      maturityDescription = sanitizeText(maturityDescription);
+      if (maturityDescription.length < 1) {
+        throw new Error("Classification description contains no usable text.");
+      }
     }
 
     return Object.freeze({
@@ -92,9 +106,9 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
       getMaturity: () => maturity,
       getPublished: () => published,
       getPublishedAt: () => publishedAt,
-      getName: () => sanitizedName,
-      getDescription: () => sanitizedDescription,
-      getMaturityDescription: () => sanitizedMaturityDescription,
+      getName: () => name,
+      getDescription: () => description,
+      getMaturityDescription: () => maturityDescription,
       getTechnologyData: () => ({
         id,
         category,
@@ -102,9 +116,25 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
         teamId,
         published,
         publishedAt,
-        name: sanitizedName,
-        description: sanitizedDescription,
-        maturityDescription: sanitizedMaturityDescription,
+        name,
+        description,
+        maturityDescription,
       }),
+      publish: () => {
+        if (published) {
+          throw new Error("Technology is already published");
+        }
+        if (!maturity) {
+          throw new Error("Maturity needs to be set before publishing");
+        }
+        if (!maturityDescription) {
+          throw new Error(
+            "Maturity description needs to be set before publishing"
+          );
+        }
+
+        published = true;
+        publishedAt = new Date().toISOString();
+      },
     });
   };
