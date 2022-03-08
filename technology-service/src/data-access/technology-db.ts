@@ -1,4 +1,9 @@
-import { TechnologyCategory, TechnologyMaturity } from "common";
+import {
+  HistoryEvent,
+  TechnologyCategory,
+  TechnologyHistoryData,
+  TechnologyMaturity,
+} from "common";
 import { MakeDbFn } from ".";
 import { makeTechnology, makeTechnologyPreview } from "../technology";
 import { Technology } from "../technology/technology";
@@ -16,7 +21,11 @@ export interface TechnologyDb {
     category?: TechnologyCategory;
   }) => Promise<TechnologyPreview[]>;
   addTechnology: (technology: Technology, accountId: string) => void;
-  update: (technology: Technology) => void;
+  update: (technology: Technology, accountId: string) => void;
+  getHistoryEvents: (props: {
+    teamId: string;
+    technologyId: string;
+  }) => Promise<TechnologyHistoryData>;
 }
 
 export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
@@ -129,7 +138,7 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
       throw new Error("Failed to add technologies.");
     }
   },
-  update: async (technology) => {
+  update: async (technology, accountId) => {
     try {
       const db = await makeDb();
 
@@ -160,9 +169,51 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
           technology.getTeamId(),
         ]
       );
+
+      const newHistoryEvents = technology.getNewHistoryEvents();
+      if (newHistoryEvents.length > 0) {
+        await db.query(
+          `INSERT INTO history(technology_id, team_id, history_events, changed_by)
+          VALUES($1,$2,$3,$4)`,
+          [
+            technology.getId(),
+            technology.getTeamId(),
+            JSON.stringify(newHistoryEvents),
+            accountId,
+          ]
+        );
+      }
     } catch (error) {
       console.log(error);
       throw new Error("Failed to update technology.");
+    }
+  },
+  getHistoryEvents: async ({ teamId, technologyId }) => {
+    try {
+      const db = await makeDb();
+
+      type DbResultSet = {
+        timestamp: string;
+        history_events: HistoryEvent;
+        changed_by: string;
+      };
+      let result = await db.query<DbResultSet>(
+        "SELECT timestamp, history_events, changed_by FROM history WHERE team_id = $1 AND technology_id = $2",
+        [teamId, technologyId]
+      );
+
+      const historiesResult = result.rows;
+      if (!historiesResult) throw new Error("Failed to get history.");
+      const history = historiesResult.map((historyResult) => ({
+        timestamp: new Date(historyResult.timestamp).toISOString(),
+        historyEvents: historyResult.history_events,
+        changedBy: historyResult.changed_by,
+      }));
+
+      return history;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to find history.");
     }
   },
 });

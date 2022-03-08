@@ -1,7 +1,10 @@
 import type { AccountRole, Authorization } from "./typings/account";
 import {
+  HistoryEvent,
+  HistoryEventType,
   PatchTechnologyBody,
   PostTechnologyBody,
+  TechnologyHistoryData,
 } from "./typings/api/technology";
 import type {
   TechnologyCategory,
@@ -19,4 +22,7 @@ export type {
   Authorization,
   PostTechnologyBody,
   PatchTechnologyBody,
+  HistoryEventType,
+  HistoryEvent,
+  TechnologyHistoryData,
 };

@@ -28,7 +28,6 @@ export const buildEditTechnology =
       teamId: changes.teamId,
       id: changes.id,
     });
-    // TODO: persist technology for history
 
     // update fields
     if (changes.name) technology.setName(changes.name);
@@ -50,7 +49,8 @@ export const buildEditTechnology =
     // publishing
     if (changes.published) technology.publish();
 
-    await technologyDb.update(technology);
+    // persist changes
+    await technologyDb.update(technology, accountId);
 
     return technology;
   };

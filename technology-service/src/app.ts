@@ -5,6 +5,7 @@ import { ENV } from "./config/config";
 import {
   getTechnologiesPreview,
   getTechnology,
+  getTechnologyHistory,
   patchTechnology,
   postTechnology,
 } from "./controllers";
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 // Routes
 app.get("/preview", makeExpressCallback(getTechnologiesPreview));
 app.get("/:id", makeExpressCallback(getTechnology));
+app.get("/history/:technologyId", makeExpressCallback(getTechnologyHistory));
 app.post("/", makeExpressCallback(postTechnology));
 app.patch("/", makeExpressCallback(patchTechnology));
 app.use(makeExpressCallback(notFound));
