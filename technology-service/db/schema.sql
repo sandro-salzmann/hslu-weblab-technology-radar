@@ -1,6 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 DROP TABLE technology CASCADE;
+DROP TABLE history CASCADE;
 
 DROP TYPE category;
 DROP TYPE maturity;
