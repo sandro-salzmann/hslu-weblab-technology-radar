@@ -8,6 +8,10 @@ export type TechnologySlice = {
   activePublishingTechnologyId?: string;
   setActivePublishingTechnologyId: (id: string) => void;
   clearActivePublishingTechnologyId: () => void;
+
+  activeEditingTechnologyId?: string;
+  setActiveEditingTechnologyId: (id: string) => void;
+  clearActiveEditingTechnologyId: () => void;
 };
 
 export const createTechnologySlice: StoreSlice<TechnologySlice> = (
@@ -25,4 +29,10 @@ export const createTechnologySlice: StoreSlice<TechnologySlice> = (
     set((state) => ({ activePublishingTechnologyId: id })),
   clearActivePublishingTechnologyId: () =>
     set((state) => ({ activePublishingTechnologyId: undefined })),
+
+  activeEditingTechnologyId: undefined,
+  setActiveEditingTechnologyId: (id: string) =>
+    set((state) => ({ activeEditingTechnologyId: id })),
+  clearActiveEditingTechnologyId: () =>
+    set((state) => ({ activeEditingTechnologyId: undefined })),
 });

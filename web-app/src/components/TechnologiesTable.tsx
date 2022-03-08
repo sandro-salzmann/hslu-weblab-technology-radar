@@ -10,6 +10,9 @@ export const TechnologiesTable = () => {
   const setActivePublishingTechnologyId = useStore(
     (state) => state.setActivePublishingTechnologyId
   );
+  const setActiveEditingTechnologyId = useStore(
+    (state) => state.setActiveEditingTechnologyId
+  );
 
   return error ? (
     <span>Failed to get technologies ({error.message})</span>
@@ -18,10 +21,12 @@ export const TechnologiesTable = () => {
       <Table.Header>
         <Table.Row>
           <Table.HeaderCell width={1}>Published</Table.HeaderCell>
-          <Table.HeaderCell width={3}>Category</Table.HeaderCell>
-          <Table.HeaderCell width={3}>Maturity</Table.HeaderCell>
+          <Table.HeaderCell width={2}>Category</Table.HeaderCell>
+          <Table.HeaderCell width={1}>Maturity</Table.HeaderCell>
           <Table.HeaderCell>Name</Table.HeaderCell>
-          <Table.HeaderCell width={1}>Actions</Table.HeaderCell>
+          <Table.HeaderCell colSpan={2} width={3}>
+            Actions
+          </Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -37,6 +42,7 @@ export const TechnologiesTable = () => {
             ))
           : data.map((props) => (
               <TechnologiesTableRow
+                onEditClick={setActiveEditingTechnologyId}
                 onPublishClick={setActivePublishingTechnologyId}
                 {...props}
               />
