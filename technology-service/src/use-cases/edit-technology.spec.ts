@@ -23,12 +23,12 @@ describe("edit technology", () => {
   });
 
   it("requires a valid accountId", () => {
-    expect(
+    expect(() =>
       editTechnology(makeFakeTechnologyData(), "invalid", "LEADER")
     ).rejects.toThrow("You must supply a accountId");
   });
   it("requires a valid technology id", () => {
-    expect(
+    expect(() =>
       editTechnology(
         makeFakeTechnologyData({ id: "invalid" }),
         Id.makeId(),
@@ -37,11 +37,11 @@ describe("edit technology", () => {
     ).rejects.toThrow("You must supply a valid technology id");
   });
   it("requires a leader role", () => {
-    expect(
+    expect(() =>
       editTechnology(makeFakeTechnologyData(), Id.makeId(), "MEMBER")
     ).rejects.toThrow("You don't have permissions to edit technologies.");
   });
-  xit("can edit a technology", async () => {
+  it("can edit a technology", async () => {
     const technologyDb = makeTechnologyDb({ makeDb });
 
     const teamId = Id.makeId();
@@ -58,27 +58,69 @@ describe("edit technology", () => {
     await insertTechnology(existingTechnology);
     await insertTechnology(makeFakeTechnologyData({ teamId: Id.makeId() }));
 
-    expect(
-      editTechnology(
-        { ...existingTechnology, name: "new-name" },
-        Id.makeId(),
-        "LEADER"
-      )
-    ).resolves.not.toThrow();
-    expect(
-      editTechnology(
-        { ...existingTechnology2, name: "new-name-2" },
-        Id.makeId(),
-        "LEADER"
-      )
-    ).resolves.not.toThrow();
+    const id1 = Id.makeId();
+    const id2 = Id.makeId();
+    await editTechnology(
+      {
+        id: existingTechnology.id,
+        teamId,
+        name: "new-name",
+      },
+      id1,
+      "LEADER"
+    );
+    await editTechnology(
+      { ...existingTechnology2, name: "new-name-2" },
+      id2,
+      "LEADER"
+    );
 
     const previewTechnologies = buildPreviewTechnologies({ technologyDb });
     expect(
       previewTechnologies({ teamId, teamRole: "LEADER" })
     ).resolves.toEqual([
-      makeTechnologyPreviewOf({ ...existingTechnology2, name: "new-name-2" }),
-      makeTechnologyPreviewOf({ ...existingTechnology, name: "new-name" }),
+      makeTechnologyPreviewOf({
+        ...existingTechnology,
+        name: "new-name",
+        changedBy: id1,
+      }),
+      makeTechnologyPreviewOf({
+        ...existingTechnology2,
+        name: "new-name-2",
+        changedBy: id2,
+      }),
+    ]);
+  });
+  it("doesnt change changedBy when nothing has been changed", async () => {
+    const technologyDb = makeTechnologyDb({ makeDb });
+
+    const teamId = Id.makeId();
+    const id = Id.makeId();
+    const existingTechnology1 = makeFakeTechnologyData({
+      teamId,
+      published: false,
+    });
+    const existingTechnology2 = makeFakeTechnologyData({
+      teamId,
+      published: false,
+      changedBy: id,
+    });
+    await insertTechnology(existingTechnology1);
+    await insertTechnology(existingTechnology2);
+
+    await editTechnology(existingTechnology1, Id.makeId(), "LEADER");
+    await editTechnology(
+      { ...existingTechnology2, published: true },
+      Id.makeId(),
+      "LEADER"
+    );
+
+    const previewTechnologies = buildPreviewTechnologies({ technologyDb });
+    expect(
+      previewTechnologies({ teamId, teamRole: "LEADER" })
+    ).resolves.toEqual([
+      makeTechnologyPreviewOf(existingTechnology1),
+      makeTechnologyPreviewOf({ ...existingTechnology2, published: true }),
     ]);
   });
   it("can't edit a technology that doesn't exist", async () => {
@@ -89,7 +131,7 @@ describe("edit technology", () => {
     });
     await insertTechnology(existingTechnology);
 
-    expect(
+    expect(() =>
       editTechnology(
         makeFakeTechnologyData({ teamId, id: Id.makeId() }),
         Id.makeId(),
@@ -110,7 +152,7 @@ describe("edit technology", () => {
     });
     await insertTechnology(otherExistingTechnology);
 
-    expect(
+    expect(() =>
       editTechnology(
         makeFakeTechnologyData({ teamId, id: otherExistingTechnology.id }),
         Id.makeId(),

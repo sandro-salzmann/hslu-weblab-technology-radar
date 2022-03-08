@@ -30,7 +30,22 @@ export const buildEditTechnology =
     });
     // TODO: persist technology for history
 
-    // TODO: update fields
+    // update fields
+    if (changes.name) technology.setName(changes.name);
+    if (changes.category) technology.setCategory(changes.category);
+    if (changes.description) technology.setDescription(changes.description);
+    if (changes.maturity) technology.setMaturity(changes.maturity);
+    if (changes.maturityDescription)
+      technology.setMaturityDescription(changes.maturityDescription);
+    if (
+      changes.name ||
+      changes.category ||
+      changes.description ||
+      changes.maturity ||
+      changes.maturityDescription
+    ) {
+      technology.hasChanged(accountId);
+    }
 
     // publishing
     if (changes.published) technology.publish();

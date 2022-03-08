@@ -1,7 +1,8 @@
 import { makeTechnology } from ".";
+import { Id } from "../Id";
 import { makeFakeTechnologyData } from "../__test__/fixtures/technology";
 
-describe("technology-preview", () => {
+describe("technology", () => {
   it("must have a valid id", () => {
     const nullId = makeFakeTechnologyData({ id: null });
     expect(() => makeTechnology(nullId)).toThrow(
@@ -10,6 +11,16 @@ describe("technology-preview", () => {
     const invalidId = makeFakeTechnologyData({ id: "invalid" });
     expect(() => makeTechnology(invalidId)).toThrow(
       "Technology must have a valid id."
+    );
+  });
+  it("must have a valid team id", () => {
+    const nullTeamId = makeFakeTechnologyData({ teamId: null });
+    expect(() => makeTechnology(nullTeamId)).toThrow(
+      "Technology must have a valid team id."
+    );
+    const invalidTeamId = makeFakeTechnologyData({ teamId: "invalid" });
+    expect(() => makeTechnology(invalidTeamId)).toThrow(
+      "Technology must have a valid team id."
     );
   });
   it("must have a valid published status", () => {
@@ -21,6 +32,10 @@ describe("technology-preview", () => {
     expect(() => makeTechnology(invalidStatus)).toThrow(
       "Technology must have a valid published status."
     );
+  });
+  it("defaults to unpublished status", () => {
+    const noPublishedStatus = makeFakeTechnologyData({ published: undefined });
+    expect(makeTechnology(noPublishedStatus).getPublished()).toEqual(false);
   });
   it("can have a valid published status", () => {
     const notPublished = makeFakeTechnologyData({ published: false });
@@ -49,6 +64,19 @@ describe("technology-preview", () => {
     expect(() => makeTechnology(platformsCategory)).not.toThrow();
     const technology = makeTechnology(platformsCategory);
     expect(technology.getCategory()).toBe("platforms");
+  });
+  it("can have a valid changedBy", () => {
+    const id = Id.makeId();
+    const changedById = makeFakeTechnologyData({ changedBy: id });
+    expect(() => makeTechnology(changedById)).not.toThrow();
+    const technology = makeTechnology(changedById);
+    expect(technology.getChangedBy()).toBe(id);
+  });
+  it("cannot have an invalid changedBy", () => {
+    const invalidChangedBy = makeFakeTechnologyData({ changedBy: "invalid" });
+    expect(() => makeTechnology(invalidChangedBy)).toThrow(
+      "Technology must have a valid changedBy."
+    );
   });
   it("can have a maturity when not published", () => {
     const holdMaturity = makeFakeTechnologyData({
@@ -212,5 +240,96 @@ describe("technology-preview", () => {
     publishedTechnology.publish();
     expect(publishedTechnology.getPublished()).toEqual(true);
     expect(publishedTechnology.getPublishedAt()).toBeDefined();
+  });
+  it("can convert changedAt date strings to ISOString", () => {
+    const changedAtValid = makeFakeTechnologyData({
+      changedAt: "2017-01-26",
+      published: true,
+    });
+    expect(() => makeTechnology(changedAtValid)).not.toThrow();
+    const technology = makeTechnology(changedAtValid);
+    expect(technology.getChangedAt()).toBe(
+      new Date("2017-01-26").toISOString()
+    );
+  });
+  it("cannot convert invalid changedAt date strings to ISOString", () => {
+    const changedAtInvalid = makeFakeTechnologyData({
+      changedAt: "invalid",
+      published: true,
+    });
+    expect(() => makeTechnology(changedAtInvalid)).toThrow(
+      "changedAt is not a valid date string."
+    );
+  });
+  it("can set a valid name", () => {
+    const technologyFakeData = makeFakeTechnologyData({
+      published: true,
+    });
+    const technology = makeTechnology(technologyFakeData);
+    expect(() => technology.setName("<svg><g/onload=alert(2)//<p>")).toThrow(
+      "Name contains no usable text."
+    );
+    technology.setName("valid");
+    expect(technology.getName()).toEqual("valid");
+  });
+  it("can set a valid description", () => {
+    const technologyFakeData = makeFakeTechnologyData({
+      published: true,
+    });
+    const technology = makeTechnology(technologyFakeData);
+    expect(() =>
+      technology.setDescription("<svg><g/onload=alert(2)//<p>")
+    ).toThrow("Description contains no usable text.");
+    technology.setDescription("valid");
+    expect(technology.getDescription()).toEqual("valid");
+  });
+  it("can set a valid maturity description", () => {
+    const technologyFakeData = makeFakeTechnologyData({
+      published: true,
+    });
+    const technology = makeTechnology(technologyFakeData);
+    expect(() =>
+      technology.setMaturityDescription("<svg><g/onload=alert(2)//<p>")
+    ).toThrow("Classification description contains no usable text.");
+    technology.setMaturityDescription("valid");
+    expect(technology.getMaturityDescription()).toEqual("valid");
+  });
+  it("can set a valid maturity", () => {
+    const technologyFakeData = makeFakeTechnologyData({
+      published: true,
+    });
+    const technology = makeTechnology(technologyFakeData);
+    // @ts-ignore to test invalid values
+    expect(() => technology.setMaturity("invalid")).toThrow(
+      "Technology must have a valid maturity."
+    );
+    technology.setMaturity("assess");
+    expect(technology.getMaturity()).toEqual("assess");
+  });
+  it("can set a valid category", () => {
+    const technologyFakeData = makeFakeTechnologyData({
+      published: true,
+    });
+    const technology = makeTechnology(technologyFakeData);
+    // @ts-ignore to test invalid values
+    expect(() => technology.setCategory("invalid")).toThrow(
+      "Technology must have a valid category."
+    );
+    technology.setCategory("techniques");
+    expect(technology.getCategory()).toEqual("techniques");
+  });
+  it("can set changed information", () => {
+    const technologyFakeData = makeFakeTechnologyData({
+      published: true,
+    });
+    const technology = makeTechnology(technologyFakeData);
+    // @ts-ignore to test invalid values
+    expect(() => technology.hasChanged("invalid")).toThrow(
+      "Technology must have a valid changedBy."
+    );
+    const id = Id.makeId();
+    technology.hasChanged(id);
+    expect(technology.getChangedBy()).toEqual(id);
+    expect(technology.getChangedAt()).toBeDefined();
   });
 });

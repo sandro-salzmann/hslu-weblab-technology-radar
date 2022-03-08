@@ -34,8 +34,10 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
         maturity_description: string;
         published: boolean;
         published_at: string;
+        changed_by: string;
+        changed_at: string;
       }>(
-        "SELECT id, team_id, category, maturity, name, description, maturity_description, published, published_at FROM technology WHERE team_id = $1 AND id = $2",
+        "SELECT id, team_id, category, maturity, name, description, maturity_description, published, published_at, changed_by, changed_at FROM technology WHERE team_id = $1 AND id = $2",
         [teamId, id]
       );
       const technologyResult = result.rows[0];
@@ -50,6 +52,8 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
         maturityDescription: technologyResult.maturity_description,
         published: technologyResult.published,
         publishedAt: technologyResult.published_at,
+        changedBy: technologyResult.changed_by,
+        changedAt: technologyResult.changed_at,
       });
     } catch (error) {
       console.log(error);

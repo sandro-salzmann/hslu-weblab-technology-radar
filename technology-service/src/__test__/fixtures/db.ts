@@ -44,7 +44,9 @@ CREATE TABLE technology (
   created_by uuid,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   published boolean DEFAULT false,
-  published_at TIMESTAMP
+  published_at TIMESTAMP,
+  changed_by uuid,
+  changed_at TIMESTAMP
 );`);
 
 // make a database snapshot to restore from it later
@@ -58,19 +60,17 @@ export function makeDb() {
   return pool;
 }
 
-export async function insertTechnology(
-  {
-    id,
-    name,
-    category,
-    maturity,
-    description,
-    maturityDescription,
-    teamId,
-    publishedAt,
-    published
-  }: TechnologyData
-) {
+export async function insertTechnology({
+  id,
+  name,
+  category,
+  maturity,
+  description,
+  maturityDescription,
+  teamId,
+  publishedAt,
+  published,
+}: TechnologyData) {
   await pool.query(
     "INSERT INTO technology(id, team_id, category, maturity, name, description, maturity_description, published_at, published) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)",
     [
@@ -82,7 +82,7 @@ export async function insertTechnology(
       description,
       maturityDescription,
       publishedAt,
-      published
+      published,
     ]
   );
 }

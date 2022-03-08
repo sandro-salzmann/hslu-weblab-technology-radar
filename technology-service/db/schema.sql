@@ -20,5 +20,7 @@ CREATE TABLE technology (
     created_by uuid,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     published boolean DEFAULT false,
-    published_at TIMESTAMP
+    published_at TIMESTAMP,
+    changed_by uuid,
+    changed_at TIMESTAMP
 );
