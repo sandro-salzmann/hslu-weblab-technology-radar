@@ -36,5 +36,5 @@ export interface HistoryEvent {
 export type TechnologyHistoryData = {
   timestamp: string;
   changedBy: string;
-  historyEvents: HistoryEvent;
+  historyEvents: HistoryEvent[];
 }[];
