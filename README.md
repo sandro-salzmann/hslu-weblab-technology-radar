@@ -8,9 +8,9 @@ Um das Programm zu starten müssen folgende Schritte durchführt werden:
 
 1. Auth0-Umgebung erstellen
    - Unter Actions ➔ Flows ➔ Login ➔ nach Einstiegspunkt "Start - User Logged in" folgende Actions erstellen:
-     1. (add-uuid-to-app-metadata Action](auth0\add-uuid-to-app-metadata.action.js]
-     2. (add-user-metadata-to-idtoken Action](auth0\add-user-metadata-to-idtoken.action.js]
-     3. (add-uuid-to-idtoken Action](auth0\add-uuid-to-idtoken.action.js]
+     1. [add-uuid-to-app-metadata Action](auth0\add-uuid-to-app-metadata.action.js)
+     2. [add-user-metadata-to-idtoken Action](auth0\add-user-metadata-to-idtoken.action.js)
+     3. [add-uuid-to-idtoken Action](auth0\add-uuid-to-idtoken.action.js)
 2. Umgebungen anpassen
    - [web-app\.env.development.local](web-app.env.development.local) ([Beispiel](web-app.env.example))
    - [technology-service\.env](technology-service.env) ([Beispiel](technology-service.env.example))
