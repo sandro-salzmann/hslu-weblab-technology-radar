@@ -1,4 +1,5 @@
 import { makeAccountsDb } from "../data-access/accounts-db";
+import { Id } from "../Id";
 import { makeFakeAccountData } from "../__test__/fixtures/account";
 import { insertAccount, makeDb, restoreBackup } from "../__test__/fixtures/db";
 import { buildListAccount, ListAccountFn } from "./list-account";
@@ -16,9 +17,9 @@ describe("list account", () => {
   });
 
   it("requires a valid account id", () => {
-    expect(listAccount({ accountId: "invalid" })).rejects.toThrow(
-      "You must supply a valid account id."
-    );
+    expect(
+      listAccount({ accountId: "invalid", teamId: Id.makeId() })
+    ).rejects.toThrow("You must supply a valid account id.");
   });
   it("gets an account by id", async () => {
     const firstAccount = makeFakeAccountData();
@@ -29,8 +30,11 @@ describe("list account", () => {
     await insertAccount(secondAccount);
     await insertAccount(thirdAccount);
 
-    expect(await listAccount({ accountId: secondAccount.id })).toEqual(
-      secondAccount
-    );
+    expect(
+      await listAccount({
+        accountId: secondAccount.id,
+        teamId: secondAccount.teamId,
+      })
+    ).toEqual(secondAccount);
   });
 });

@@ -14,6 +14,7 @@ declare namespace Express {
     azp: string;
     scope: string;
     "https://techradar.ch/claims/uuid": string;
+    "https://techradar.ch/claims/email": string;
     verifiedClaims: Claims;
   }
 

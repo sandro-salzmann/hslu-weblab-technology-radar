@@ -12,10 +12,11 @@ export const injectAuthorization = async (
   }
 
   const accountId = req.user["https://techradar.ch/claims/uuid"];
+  const email = req.user["https://techradar.ch/claims/email"];
 
   try {
     const accountResponse = await axios.get(
-      `${ENV.accountServiceURL}/${accountId}`
+      `${ENV.authorizationServiceUrl}/${accountId}?email=${email}`
     );
     if (accountResponse.status !== 200) {
       throw {

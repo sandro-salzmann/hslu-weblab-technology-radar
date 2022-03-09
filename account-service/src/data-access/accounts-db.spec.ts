@@ -18,7 +18,10 @@ describe("accounts db", () => {
 
     await insertAccount(accountData);
 
-    const found = await accountsDb.findById({ accountId: accountData.id });
+    const found = await accountsDb.findById({
+      accountId: accountData.id,
+      teamId: accountData.teamId,
+    });
     expect(found.getAccountData()).toEqual(accountData);
   });
 });

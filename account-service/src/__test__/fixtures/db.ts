@@ -1,6 +1,6 @@
+import { AccountData } from "common";
 import { DataType, newDb } from "pg-mem";
 import { v4 as uuidv4 } from "uuid";
-import { AccountData } from "../../account/account";
 
 const db = newDb();
 const { Pool } = db.adapters.createPg();
@@ -21,7 +21,7 @@ db.public.registerFunction({
   name: "uuid_generate_v4",
   args: [],
   returns: DataType.text,
-  implementation: x => uuidv4(),
+  implementation: (x) => uuidv4(),
 });
 
 // init schema
@@ -33,7 +33,8 @@ CREATE TABLE team(
 CREATE TABLE account (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     team_role team_role,
-    team_id uuid
+    team_id uuid,
+    email varchar
 );
 
 ALTER TABLE account ADD CONSTRAINT some_fk FOREIGN KEY (team_id) REFERENCES team(id);`);
@@ -49,10 +50,15 @@ export function makeDb() {
   return pool;
 }
 
-export async function insertAccount({ id, teamRole, teamId }: AccountData) {
+export async function insertAccount({
+  id,
+  teamRole,
+  teamId,
+  email,
+}: AccountData) {
   await pool.query("INSERT INTO team(id) VALUES($1)", [teamId]);
   await pool.query(
-    "INSERT INTO account(id, team_role, team_id) VALUES($1, $2, $3)",
-    [id, teamRole, teamId]
+    "INSERT INTO account(id, team_role, team_id, email) VALUES($1, $2, $3, $4)",
+    [id, teamRole, teamId, email]
   );
 }

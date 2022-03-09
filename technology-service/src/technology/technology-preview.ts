@@ -43,7 +43,7 @@ export const buildMakeTechnologyPreview: BuildMakeTechnologyPreviewFn =
     if (!["techniques", "platforms", "tools", "languages"].includes(category)) {
       throw new Error("Technology preview must have a valid category.");
     }
-    if (!["assess", "trial", "adopt", "hold"].includes(maturity)) {
+    if (maturity && !["assess", "trial", "adopt", "hold"].includes(maturity)) {
       throw new Error("Technology preview must have a valid maturity.");
     }
     if (![true, false].includes(published)) {

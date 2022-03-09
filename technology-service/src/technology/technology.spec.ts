@@ -327,10 +327,10 @@ describe("technology", () => {
     expect(() => technology.setMaturity("invalid")).toThrow(
       "Technology must have a valid maturity."
     );
-    technology.setMaturity("assess");
-    expect(technology.getMaturity()).toEqual("assess");
+    technology.setMaturity("hold");
+    expect(technology.getMaturity()).toEqual("hold");
     expect(technology.getNewHistoryEvents()).toEqual([
-      { newValue: "assess", prevValue: "assess", type: "maturityChanged" },
+      { newValue: "hold", prevValue: "assess", type: "maturityChanged" },
     ]);
   });
   it("can set a valid category", () => {

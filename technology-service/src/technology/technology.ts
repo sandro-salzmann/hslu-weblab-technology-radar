@@ -225,49 +225,59 @@ export const buildMakeTechnology: BuildMakeTechnologyFn =
       setName: (newName: string) => {
         let prevName = name;
         name = validateName(newName);
-        newHistoryEvents.push({
-          type: "nameChanged",
-          prevValue: prevName,
-          newValue: name,
-        });
+        if (name !== prevName) {
+          newHistoryEvents.push({
+            type: "nameChanged",
+            prevValue: prevName,
+            newValue: name,
+          });
+        }
       },
       setDescription: (newDescription: string) => {
         let prevDescription = description;
         description = validateDescription(newDescription);
-        newHistoryEvents.push({
-          type: "descriptionChanged",
-          prevValue: prevDescription,
-          newValue: description,
-        });
+        if (description !== prevDescription) {
+          newHistoryEvents.push({
+            type: "descriptionChanged",
+            prevValue: prevDescription,
+            newValue: description,
+          });
+        }
       },
       setMaturityDescription: (newMaturityDescription: string) => {
         let prevMaturityDescription = maturityDescription;
         maturityDescription = validateMaturityDescription(
           newMaturityDescription
         );
-        newHistoryEvents.push({
-          type: "maturityDescriptionChanged",
-          prevValue: prevMaturityDescription,
-          newValue: maturityDescription,
-        });
+        if (maturityDescription !== prevMaturityDescription) {
+          newHistoryEvents.push({
+            type: "maturityDescriptionChanged",
+            prevValue: prevMaturityDescription,
+            newValue: maturityDescription,
+          });
+        }
       },
       setCategory: (newCategory: TechnologyCategory) => {
         let prevCategory = category;
         category = validateCategory(newCategory);
-        newHistoryEvents.push({
-          type: "categoryChanged",
-          prevValue: prevCategory,
-          newValue: category,
-        });
+        if (category !== prevCategory) {
+          newHistoryEvents.push({
+            type: "categoryChanged",
+            prevValue: prevCategory,
+            newValue: category,
+          });
+        }
       },
       setMaturity: (newMaturity: TechnologyMaturity) => {
         let prevMaturity = maturity;
         maturity = validateMaturity(newMaturity);
-        newHistoryEvents.push({
-          type: "maturityChanged",
-          prevValue: prevMaturity,
-          newValue: maturity,
-        });
+        if (maturity !== prevMaturity) {
+          newHistoryEvents.push({
+            type: "maturityChanged",
+            prevValue: prevMaturity,
+            newValue: maturity,
+          });
+        }
       },
       hasChanged: (byAccountId: string) => {
         changedBy = validateChangedBy(byAccountId);

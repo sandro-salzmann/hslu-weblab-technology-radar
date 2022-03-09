@@ -15,5 +15,6 @@ CREATE TYPE team_role AS ENUM ('LEADER', 'MEMBER');
 CREATE TABLE account (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     team_role team_role,
-    team_id uuid REFERENCES team(id)
+    team_id uuid REFERENCES team(id),
+    email varchar
 );

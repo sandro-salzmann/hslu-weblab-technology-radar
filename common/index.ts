@@ -1,4 +1,5 @@
 import type { AccountRole, Authorization } from "./typings/account";
+import { AccountData } from "./typings/api/account";
 import {
   HistoryEvent,
   HistoryEventType,
@@ -25,4 +26,5 @@ export type {
   HistoryEventType,
   HistoryEvent,
   TechnologyHistoryData,
+  AccountData,
 };

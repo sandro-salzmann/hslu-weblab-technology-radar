@@ -9,7 +9,7 @@ import {
 import { HistoryEvent } from "common";
 import React, { Fragment, useState } from "react";
 import { Accordion, Header, Icon, Modal } from "semantic-ui-react";
-import { useTechnologyHistoryQuery } from "../api/useQueries";
+import { useAccountsQuery, useTechnologyHistoryQuery } from "../api/useQueries";
 import { PlaceholderFluidHeaderWithTwoLines } from "./Placeholders";
 
 interface TechnologyHistoryProps {
@@ -102,6 +102,9 @@ export const TechnologyHistory = ({ id }: TechnologyHistoryProps) => {
     a.timestamp < b.timestamp ? 1 : -1
   );
 
+  const { data: changedByAccounts = [], error: errorLoadingAccounts } =
+    useAccountsQuery(sortedHistory.map(({ changedBy }) => changedBy));
+
   return (
     <Accordion>
       <Accordion.Title active={open} index={0} onClick={onTitleClick}>
@@ -126,7 +129,15 @@ export const TechnologyHistory = ({ id }: TechnologyHistoryProps) => {
                   <Container>
                     <YearContent startDate={timestamp} />
                     <BodyContent>
-                      <Section title={changedBy}>
+                      <Section
+                        title={
+                          errorLoadingAccounts
+                            ? "Error loading account."
+                            : changedByAccounts.find(
+                                ({ id }) => id === changedBy
+                              )?.email || "Loading name..."
+                        }
+                      >
                         {historyEvents.map((event: HistoryEvent) => (
                           // @ts-ignore text can be a react element
                           <Description text={getHistoryEvent(event)} />

@@ -25,10 +25,6 @@ describe("technology-preview", () => {
     );
   });
   it("must have a valid maturity", () => {
-    const nullMaturity = makeFakeTechnologyPreviewData({ maturity: null });
-    expect(() => makeTechnologyPreview(nullMaturity)).toThrow(
-      "Technology preview must have a valid maturity."
-    );
     const invalidMaturity = makeFakeTechnologyPreviewData({
       maturity: "invalid",
     });
@@ -41,7 +37,9 @@ describe("technology-preview", () => {
     expect(() => makeTechnologyPreview(nullStatus)).toThrow(
       "Technology preview must have a valid published status."
     );
-    const invalidStatus = makeFakeTechnologyPreviewData({ published: "invalid" });
+    const invalidStatus = makeFakeTechnologyPreviewData({
+      published: "invalid",
+    });
     expect(() => makeTechnologyPreview(invalidStatus)).toThrow(
       "Technology preview must have a valid published status."
     );

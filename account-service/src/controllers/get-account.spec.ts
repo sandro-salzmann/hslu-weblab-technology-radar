@@ -22,7 +22,7 @@ describe("get account controller", () => {
       body: fakeAccount,
     };
     // @ts-expect-error because the request object is incomplete on purpose
-    const actual = await getAccount(request);
+    const actual = await getAccount(request, {});
     expect(actual).toEqual(expected);
   });
   it("reports user errors", async () => {
@@ -46,7 +46,7 @@ describe("get account controller", () => {
       body: { error: "Oops!" },
     };
     // @ts-expect-error because the request object is incomplete on purpose
-    const actual = await getAccount(request);
+    const actual = await getAccount(request, {});
     expect(actual).toEqual(expected);
   });
 });

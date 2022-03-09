@@ -7,6 +7,7 @@ export function makeFakeAccountData(overrides = {}): AccountData {
     id: Id.makeId(),
     teamId: Id.makeId(),
     teamRole: faker.random.arrayElement(["MEMBER", "LEADER"]),
+    email: faker.internet.email()
   };
 
   return {

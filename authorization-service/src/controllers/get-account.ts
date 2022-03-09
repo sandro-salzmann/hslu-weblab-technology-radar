@@ -1,4 +1,3 @@
-import { Authorization } from "common";
 import { Request } from "express";
 import { HttpResponse } from ".";
 import { ListAccountFn } from "../use-cases/list-account";
@@ -8,21 +7,21 @@ type MakeGetAccountFn = ({
 }: {
   listAccount: ListAccountFn;
 }) => (
-  props: Request<{ id: string }, {}, {}>,
-  authorization: Authorization
+  props: Request<{ id: string }, {}, {}, { email: string }>
 ) => Promise<HttpResponse>;
 
 export const makeGetAccount: MakeGetAccountFn =
   ({ listAccount }) =>
-  async (httpRequest, { teamId }) => {
+  async (httpRequest) => {
     const headers = {
       "Content-Type": "application/json",
     };
     try {
       let account = await listAccount({
         accountId: httpRequest.params.id,
-        teamId,
+        email: httpRequest.query.email,
       });
+
       return {
         headers,
         statusCode: 200,

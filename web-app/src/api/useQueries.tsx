@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import {
+  AccountData,
   Authorization,
   TechnologyCategory,
   TechnologyData,
@@ -23,6 +24,26 @@ export const useTechnologyQuery = (id?: string) => {
   });
 };
 
+export const useAccountsQuery = (ids?: string[]) => {
+  const { isAuthenticated } = useAuth0();
+  const { authFetch } = useAuthFetch();
+
+  const fetchAccount = async () => {
+    if (ids) {
+      const results = await Promise.all(
+        ids.map(
+          async (id) => (await authFetch(`/account/${id}`)) as AccountData
+        )
+      );
+      return results;
+    }
+    return [];
+  };
+
+  return useQuery<AccountData[], Error>(["account", ids], fetchAccount, {
+    enabled: isAuthenticated && !!ids,
+  });
+};
 
 export const usePermissionsQuery = () => {
   const { isAuthenticated } = useAuth0();
