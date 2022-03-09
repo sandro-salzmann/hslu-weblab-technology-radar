@@ -265,16 +265,16 @@ describe("technology db", () => {
     patchedTechnology.setName("new-name");
     await technologyDb.update(patchedTechnology, technology.getTeamId());
 
-    const noHistoryEvents = await technologyDb.getHistoryEvents({
+    const noHistory = await technologyDb.getHistoryEvents({
       teamId: Id.makeId(),
       technologyId: technology.getId(),
     });
-    expect(noHistoryEvents).toEqual([]);
-    const historyEvents = await technologyDb.getHistoryEvents({
+    expect(noHistory).toEqual([]);
+    const history = await technologyDb.getHistoryEvents({
       teamId: technology.getTeamId(),
       technologyId: technology.getId(),
     });
-    expect(historyEvents).toHaveLength(2);
+    expect(history[0].historyEvents).toHaveLength(2);
   });
 
   it("doesnt throw internal errors (previewAll)", () => {

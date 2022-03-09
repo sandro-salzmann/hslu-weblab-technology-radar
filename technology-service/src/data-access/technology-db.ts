@@ -194,7 +194,7 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
 
       type DbResultSet = {
         timestamp: string;
-        history_events: HistoryEvent;
+        history_events: HistoryEvent[];
         changed_by: string;
       };
       let result = await db.query<DbResultSet>(
