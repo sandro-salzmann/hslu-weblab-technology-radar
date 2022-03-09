@@ -28,7 +28,7 @@ const { value: validEnvVars, error } = envVarsSchemaValidator.validate(
 );
 
 if (error) {
-  throw new Error(`Config validation error: ${error.message}`);
+  throw new Error(`Request validation error: ${error.message}`);
 }
 
 if (!validEnvVars) {

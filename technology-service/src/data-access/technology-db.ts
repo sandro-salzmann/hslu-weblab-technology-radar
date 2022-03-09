@@ -135,7 +135,7 @@ export const makeTechnologyDb: MakeTechnologyDbFn = ({ makeDb }) => ({
       );
     } catch (error) {
       console.log(error);
-      throw new Error("Failed to add technologies.");
+      throw new Error("Failed to add technology.");
     }
   },
   update: async (technology, accountId) => {

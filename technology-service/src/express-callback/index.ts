@@ -31,7 +31,7 @@ export const makeExpressCallback =
         validator.validate(authorization);
 
       if (error) {
-        throw new Error(`Config validation error: ${error.message}`);
+        throw new Error(`Request validation error: ${error.message}`);
       }
       if (!validatedAuthorization) {
         throw new Error("Authorisation validation failed.");

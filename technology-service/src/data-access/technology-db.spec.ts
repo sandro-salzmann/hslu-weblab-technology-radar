@@ -139,14 +139,14 @@ describe("technology db", () => {
     const technology = makeTechnology(makeFakeTechnologyData());
     await technologyDb.addTechnology(technology, Id.makeId());
     expect(technologyDb.addTechnology(technology, Id.makeId())).rejects.toThrow(
-      "Failed to add technologies."
+      "Failed to add technology."
     );
   });
 
   it("doesn't add a technology without valid account id", async () => {
     const technology = makeTechnology(makeFakeTechnologyData());
     expect(technologyDb.addTechnology(technology, "Invalid")).rejects.toThrow(
-      "Failed to add technologies."
+      "Failed to add technology."
     );
   });
 
@@ -301,7 +301,7 @@ describe("technology db", () => {
         makeTechnology(makeFakeTechnologyData()),
         Id.makeId()
       )
-    ).rejects.toThrow("Failed to add technologies.");
+    ).rejects.toThrow("Failed to add technology.");
   });
 
   it("doesnt throw internal errors (update)", () => {

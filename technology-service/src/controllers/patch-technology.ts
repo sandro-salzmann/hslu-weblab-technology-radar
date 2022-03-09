@@ -23,7 +23,7 @@ export const makePatchTechnology =
         httpRequest.body
       );
 
-      if (error) throw new Error(`Config validation error: ${error.message}`);
+      if (error) throw new Error(`Request validation error: ${error.message}`);
       if (!validatedBody) throw new Error("Validation failed.");
 
       const updatedTechnology = await editTechnology(

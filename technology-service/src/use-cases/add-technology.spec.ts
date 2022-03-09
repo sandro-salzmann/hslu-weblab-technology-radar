@@ -79,6 +79,6 @@ describe("add technology", () => {
         Id.makeId(),
         "LEADER"
       )
-    ).rejects.toThrow("Failed to add technologies.");
+    ).rejects.toThrow("Failed to add technology.");
   });
 });

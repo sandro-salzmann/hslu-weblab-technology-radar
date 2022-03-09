@@ -93,7 +93,7 @@ describe("post technology controller", () => {
       const actual = await postTechnology(request, {});
       expect(actual.statusCode).toEqual(400);
       expect(actual.body?.error).toMatch(
-        new RegExp("^Config validation error:")
+        new RegExp("^Request validation error:")
       );
     };
 

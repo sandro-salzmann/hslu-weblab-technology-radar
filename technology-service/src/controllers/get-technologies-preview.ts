@@ -35,7 +35,7 @@ export const makeGetTechnologiesPreview: MakeGetTechnologiesPreviewFn =
       );
 
       if (error) {
-        throw new Error(`Config validation error: ${error.message}`);
+        throw new Error(`Request validation error: ${error.message}`);
       }
       if (!validatedQuery) {
         throw new Error("Validation failed.");

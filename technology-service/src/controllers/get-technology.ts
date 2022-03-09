@@ -32,7 +32,7 @@ export const makeGetTechnology: MakeGetTechnologyFn =
       );
 
       if (error) {
-        throw new Error(`Config validation error: ${error.message}`);
+        throw new Error(`Request validation error: ${error.message}`);
       }
       if (!validatedParams) {
         throw new Error("Validation failed.");
