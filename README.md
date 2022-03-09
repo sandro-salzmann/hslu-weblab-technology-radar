@@ -12,11 +12,13 @@ Um das Programm zu starten müssen folgende Schritte durchführt werden:
      2. [add-user-metadata-to-idtoken Action](auth0\add-user-metadata-to-idtoken.action.js)
      3. [add-uuid-to-idtoken Action](auth0\add-uuid-to-idtoken.action.js)
 2. Umgebungen anpassen
-   - [web-app\.env.development.local](web-app.env.development.local) ([Beispiel](web-app.env.example))
-   - [technology-service\.env](technology-service.env) ([Beispiel](technology-service.env.example))
-   - [account-service\.env](account-service.env) ([Beispiel](account-service.env.example))
-   - [authorization-service\.env](authorization-service.env) ([Beispiel](authorization-service.env.example))
-   - [api-gateway\.env](api-gateway.env) ([Beispiel](api-gateway.env.example))
+
+   - web-app/.env.development.local (Beispiel: [web-app/.env.example](web-app/.env.example))
+   - technology-service/.env (Beispiel: [technology-service/.env.example](technology-service/.env.example))
+   - account-service/.env (Beispiel: [account-service/.env.example](account-service/.env.example))
+   - authorization-service/.env (Beispiel: [authorization-service/.env.example](authorization-service/.env.example))
+   - api-gateway/.env (Beispiel: [api-gateway/.env.example](api-gateway/.env.example))
+
 3. PostgreSQL v14.2 installieren und Schemas laden
    - [Account Schema](account-service\db\schema.sql) laden
    - [Technology Schema](technology-service\db\schema.sql) laden
