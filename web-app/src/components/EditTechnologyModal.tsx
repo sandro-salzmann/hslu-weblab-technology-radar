@@ -30,8 +30,7 @@ const defaultValues: PatchTechnologyBody = {
   // @ts-ignore id is never a changed value
   id: undefined,
   name: undefined,
-  // @ts-ignore to use placeholder in category dropdown
-  category: undefined,
+  category: "techniques",
   description: undefined,
   // @ts-ignore to use placeholder in category dropdown
   maturity: undefined,
@@ -55,7 +54,7 @@ export const EditTechnologyModal = () => {
     (state) => state.clearActiveEditingTechnologyId
   );
 
-  const [errors, setErrors] = useState<Errors>(defaultValues);
+  const [errors, setErrors] = useState<Errors>();
   const [changedValues, setChangedValues] =
     useState<PatchTechnologyBody>(defaultValues);
 
@@ -136,17 +135,17 @@ export const EditTechnologyModal = () => {
       setErrors({
         maturity: missingMaturity
           ? "Please select a maturity."
-          : errors.maturity,
+          : errors?.maturity,
         maturityDescription: missingMaturityDescription
           ? "Please provide a maturity description."
-          : errors.maturityDescription,
-        name: missingName ? "Please provide a name." : errors.name,
+          : errors?.maturityDescription,
+        name: missingName ? "Please provide a name." : errors?.name,
         category: missingCategory
           ? "Please select a category."
-          : errors.category,
+          : errors?.category,
         description: missingDescription
           ? "Please provide a description."
-          : errors.description,
+          : errors?.description,
       });
     } else if (activeEditingTechnologyId) {
       mutate({ ...changedValues, id: activeEditingTechnologyId });
@@ -174,32 +173,32 @@ export const EditTechnologyModal = () => {
               <NameInput
                 onChange={onChangeInput}
                 value={name}
-                error={errors.name}
+                error={errors?.name}
               />
               <CategorySelection
                 onChange={onChangeSelect}
                 value={category}
-                error={errors.category}
+                error={errors?.category}
               />
               <MaturitySelection
                 onChange={onChangeSelect}
                 value={maturity}
                 required={published}
-                error={errors.maturity}
+                error={errors?.maturity}
               />
             </Form.Group>
             <DescriptionInput
               onChange={onChangeTextarea}
               value={description}
               style={{ height: 150 }}
-              error={errors.description}
+              error={errors?.description}
             />
             <MaturityDescriptionInput
               value={maturityDescription}
               onChange={onChangeTextarea}
               style={{ height: 150 }}
               required={published}
-              error={errors.maturityDescription}
+              error={errors?.maturityDescription}
             />
           </Form>
           <TechnologyHistory id={activeEditingTechnologyId} />

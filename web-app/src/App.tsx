@@ -3,6 +3,7 @@ import { TechnologyCategory } from "common";
 import React, { Fragment } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Divider, Icon, Message } from "semantic-ui-react";
+import { EditTechnologyModal } from "./components/EditTechnologyModal";
 import { Header } from "./components/Header";
 import { TechnologyViewModal } from "./components/TechnologyViewModal";
 import { AdminPage } from "./pages/AdminPage";
@@ -28,6 +29,7 @@ function App() {
           "Loading auth data..."
         ) : (
           <Fragment>
+            <EditTechnologyModal />
             <TechnologyViewModal />
             {!isAuthenticated && !isLoading && (
               <Message icon size="big" negative floating>

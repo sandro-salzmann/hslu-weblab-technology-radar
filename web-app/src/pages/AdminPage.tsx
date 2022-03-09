@@ -13,7 +13,6 @@ export const AdminPage = () => {
 
   return (
     <Fragment>
-      <EditTechnologyModal />
       <PublishTechnologyModal />
       <Button
         content="Back"

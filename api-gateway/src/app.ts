@@ -29,7 +29,7 @@ const proxyOptions: Options = {
       JSON.stringify(req.user.verifiedClaims)
     );
   },
-  onProxyRes: proxyRes => {
+  onProxyRes: (proxyRes) => {
     delete proxyRes.headers["Authorization"];
   },
 };
@@ -55,6 +55,13 @@ app.use(
     ...proxyOptions,
   })
 );
+app.get("/permissions", (req, res) => {
+  if (req.user) {
+    res.status(200).json(req.user.verifiedClaims);
+  } else {
+    res.status(500).send({ error: "User claims not found." });
+  }
+});
 
 // Start the proxy
 app.listen(ENV.port, ENV.host, () => {

@@ -20,7 +20,6 @@ export const CategorySelection = (props: FormSelectPropsWithoutOptions) => (
     label="Kategorie"
     placeholder="Kategorie"
     required
-    clearable
     name="category"
     {...props}
     options={categoryOptions}

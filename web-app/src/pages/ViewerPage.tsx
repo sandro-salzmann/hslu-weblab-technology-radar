@@ -11,16 +11,20 @@ export const ViewerPage = () => {
     isLoading,
   } = useTechnologyPreviewsQuery();
 
-  const techniqueTechnologyPreviews = technologyPreviews.filter(
+  const publishedTechnologyPreviews = technologyPreviews.filter(
+    ({ published }) => published
+  );
+
+  const techniqueTechnologyPreviews = publishedTechnologyPreviews.filter(
     ({ category }) => category === "techniques"
   );
-  const platformTechnologyPreviews = technologyPreviews.filter(
+  const platformTechnologyPreviews = publishedTechnologyPreviews.filter(
     ({ category }) => category === "platforms"
   );
-  const toolTechnologyPreviews = technologyPreviews.filter(
+  const toolTechnologyPreviews = publishedTechnologyPreviews.filter(
     ({ category }) => category === "tools"
   );
-  const languageTechnologyPreviews = technologyPreviews.filter(
+  const languageTechnologyPreviews = publishedTechnologyPreviews.filter(
     ({ category }) => category === "languages"
   );
 

@@ -30,16 +30,20 @@ export const CategoryPage = ({ category }: CategoryPageProps) => {
     navigate("/" + value.toLowerCase());
   };
 
-  const assessTechnologyPreviews = technologyPreviews.filter(
+  const publishedTechnologyPreviews = technologyPreviews.filter(
+    ({ published }) => published
+  );
+
+  const assessTechnologyPreviews = publishedTechnologyPreviews.filter(
     ({ maturity }) => maturity === "assess"
   );
-  const trialTechnologyPreviews = technologyPreviews.filter(
+  const trialTechnologyPreviews = publishedTechnologyPreviews.filter(
     ({ maturity }) => maturity === "trial"
   );
-  const adoptTechnologyPreviews = technologyPreviews.filter(
+  const adoptTechnologyPreviews = publishedTechnologyPreviews.filter(
     ({ maturity }) => maturity === "adopt"
   );
-  const holdTechnologyPreviews = technologyPreviews.filter(
+  const holdTechnologyPreviews = publishedTechnologyPreviews.filter(
     ({ maturity }) => maturity === "hold"
   );
 
@@ -76,7 +80,7 @@ export const CategoryPage = ({ category }: CategoryPageProps) => {
         icon="arrow left"
         labelPosition="left"
       />
-      <div style={{ textAlign: "center" }}>
+      <div style={{ textAlign: "right" }}>
         <CategorySelection
           value={pathname.slice(1) as TechnologyCategory}
           onChange={onCategoryChange}

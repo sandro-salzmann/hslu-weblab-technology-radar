@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Button, Header, Modal } from "semantic-ui-react";
-import { useTechnologyQuery } from "../api/useQueries";
+import { usePermissionsQuery, useTechnologyQuery } from "../api/useQueries";
 import { useStore } from "../state-management/store";
 import { toCapitalize } from "../utils/toCapitalize";
 import {
@@ -21,7 +21,10 @@ export const TechnologyViewModal = () => {
     isLoading,
   } = useTechnologyQuery(activeTechnologyId);
 
+  const { data: permissions } = usePermissionsQuery();
+
   let {
+    id,
     category = "",
     maturity = "",
     name,
@@ -29,7 +32,15 @@ export const TechnologyViewModal = () => {
     maturityDescription,
   } = technology || {};
 
+  const setActiveEditingTechnologyId = useStore(
+    (state) => state.setActiveEditingTechnologyId
+  );
+
   const close = () => clearActiveTechnologyId();
+
+  const onChangeClick = () => {
+    if (id) setActiveEditingTechnologyId(id);
+  };
 
   return error ? (
     <span>Failed to get technology ({error.message})</span>
@@ -57,6 +68,9 @@ export const TechnologyViewModal = () => {
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
+        {permissions?.teamRole === "LEADER" && (
+          <Button content="Edit" secondary onClick={onChangeClick} />
+        )}
         <Button content="Close" onClick={close} primary />
       </Modal.Actions>
     </Modal>

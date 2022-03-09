@@ -2,6 +2,7 @@ import { TechnologyCategory, TechnologyPreviewData } from "common";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Grid, Header } from "semantic-ui-react";
+import { toCapitalize } from "../utils/toCapitalize";
 import { TechnologyList } from "./TechnologyList";
 
 interface CategoryCardProps {
@@ -30,7 +31,7 @@ export const CategoryCard = ({
               alignItems: "center",
             }}
           >
-            <span>{category}</span>
+            <span>{toCapitalize(category)}</span>
             <Button
               basic
               icon="expand arrows alternate"

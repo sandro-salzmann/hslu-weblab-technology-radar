@@ -21,6 +21,14 @@ export const PlaceholderHeader = () => {
   );
 };
 
+export const PlaceholderLine = () => {
+  return (
+    <Placeholder>
+      <Placeholder.Line />
+    </Placeholder>
+  );
+};
+
 export const PlaceholderTableCell = () => {
   return (
     <Table.Cell>

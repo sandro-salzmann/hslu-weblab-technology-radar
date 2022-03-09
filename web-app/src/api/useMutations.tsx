@@ -21,7 +21,16 @@ export const useAddTechnology = ({
         `/technology`,
         {
           method: "POST",
-          body: JSON.stringify(technology),
+          body: JSON.stringify({
+            ...technology,
+            maturity:
+              // @ts-ignore maturity is "" when cleared by input field
+              technology.maturity === "" ? undefined : technology.maturity,
+            maturityDescription:
+              technology.maturityDescription === ""
+                ? undefined
+                : technology.maturityDescription,
+          }),
           headers: { "Content-Type": "application/json" },
         },
         201
@@ -31,7 +40,6 @@ export const useAddTechnology = ({
         addMessage({
           negative: true,
           header: "Failed to add technology!",
-          content: "error",
           icon: "warning sign",
         });
       },
@@ -75,6 +83,7 @@ export const usePatchTechnology = ({ onSuccess }: UsePatchTechnologyProps) => {
       },
       onSuccess: async (data, postTechnologyBody, context) => {
         await queryClient.refetchQueries(["technology-previews"]);
+        await queryClient.refetchQueries(["technology"]);
         // TODO: use setQueryData instead of refetchQueries
         onSuccess();
       },

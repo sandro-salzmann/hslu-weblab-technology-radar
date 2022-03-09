@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import {
+  Authorization,
   TechnologyCategory,
   TechnologyData,
   TechnologyHistoryData,
@@ -19,6 +20,21 @@ export const useTechnologyQuery = (id?: string) => {
 
   return useQuery<TechnologyData, Error>(["technology", id], fetchTechnology, {
     enabled: isAuthenticated && !!id,
+  });
+};
+
+
+export const usePermissionsQuery = () => {
+  const { isAuthenticated } = useAuth0();
+  const { authFetch } = useAuthFetch();
+
+  const fetchPermissions = async () => {
+    const results = (await authFetch(`/permissions`)) as Authorization;
+    return results;
+  };
+
+  return useQuery<Authorization, Error>(["permissions"], fetchPermissions, {
+    enabled: isAuthenticated,
   });
 };
 

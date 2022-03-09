@@ -40,13 +40,15 @@ export const TechnologiesTable = () => {
                 ))}
               </Table.Row>
             ))
-          : data.map((props) => (
-              <TechnologiesTableRow
-                onEditClick={setActiveEditingTechnologyId}
-                onPublishClick={setActivePublishingTechnologyId}
-                {...props}
-              />
-            ))}
+          : data
+              .sort((a, b) => (a.id < b.id ? 1 : -1))
+              .map((props) => (
+                <TechnologiesTableRow
+                  onEditClick={setActiveEditingTechnologyId}
+                  onPublishClick={setActivePublishingTechnologyId}
+                  {...props}
+                />
+              ))}
       </Table.Body>
     </Table>
   );

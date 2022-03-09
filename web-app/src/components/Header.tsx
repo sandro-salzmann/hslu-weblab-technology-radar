@@ -2,6 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "semantic-ui-react";
+import { usePermissionsQuery } from "../api/useQueries";
 import { toCapitalize } from "../utils/toCapitalize";
 
 export const Header = () => {
@@ -9,6 +10,8 @@ export const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = location.pathname.slice(1);
+
+  const { data: permissions, error } = usePermissionsQuery();
 
   const onLoginClick = () => loginWithRedirect();
 
@@ -34,15 +37,18 @@ export const Header = () => {
       }`}</h1>
       {isAuthenticated ? (
         <div>
-          {pathname === "" && (
-            <Button
-              onClick={onAdministrationClick}
-              primary
-              size="big"
-              content="Open administration"
-              {...buttonLoadingProps}
-            />
-          )}
+          {error
+            ? "Failed to load user."
+            : permissions &&
+              permissions.teamRole === "LEADER" && (
+                <Button
+                  onClick={onAdministrationClick}
+                  primary
+                  size="big"
+                  icon="settings"
+                  {...buttonLoadingProps}
+                />
+              )}
           <Button
             onClick={onLogoutClick}
             style={{ marginRight: 0 }}

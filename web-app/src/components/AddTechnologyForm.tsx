@@ -17,8 +17,7 @@ import { NameInput } from "./technology-form/NameInput";
 
 const defaultValues: PostTechnologyBody = {
   name: "",
-  // @ts-ignore to use placeholder in category dropdown
-  category: "",
+  category: "techniques",
   description: "",
   // @ts-ignore to use placeholder in category dropdown
   maturity: "",
